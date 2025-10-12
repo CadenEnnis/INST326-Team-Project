@@ -62,6 +62,37 @@ def validate_container_dimensions(length, width, depth):
     return True
 #Caden Ennis
 
+def measurement_conversion(value, from_unit, to_unit):
+    """
+    Convert measurements using units of inches, feet, and centimeters.
+    Parameters:
+        value(float): Value to convert
+        from_unit(str): inches, feet, centimeters
+        to_unit(str): Target unit of inches, feet, centimeters
+
+    Returns:
+        float: converted value
+    
+    Raises: 
+        ValueError: if units are invalid
+    """
+
+    #Defining the conversion factors
+    in_to_ft = 1/12
+    in_to_cm = 2.54
+    ft_to_in = 12
+    ft_to_cm = 30.48
+    cm_to_in = 1/2.54
+    cm_to_ft = 1/30.48
+
+    #Validate units
+    validate_units = ['in', 'ft', 'cm']
+    if from_unit not in validate_units:
+        raise ValueError("Invalid from_unit. Must be 'in', 'ft', or 'cm'.")
+    if to_unit not in validate_units:
+        raise ValueError("Invalid to_unit. Must be 'in', 'ft', or 'cm'.")   
+#Caden Ennis
+
 
 
 
