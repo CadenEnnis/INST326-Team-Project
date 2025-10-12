@@ -93,6 +93,28 @@ def measurement_conversion(value, from_unit, to_unit):
         raise ValueError("Invalid to_unit. Must be 'in', 'ft', or 'cm'.")   
 #Caden Ennis
 
+def calculate_soil_volume(length, width, depth, shape='rectangle'):
+    """
+    Calculate the volume of soil needed for a container.
 
+    Parameters:
+        length (float): Length in inches
+        width (float): Width in inches
+        depth (float): Depth in inches
+        shape (str): 'rectangle' or 'circle'
+    Returns:
+        float: volume in cubic inches
+    """
+    if shape == 'rectangle':
+        volume = length * width * depth
+    elif shape == 'circle':
+        radius = length / 2
+        volume = math.pi * radius ** 2 * depth
+    else:
+        raise ValueError("The shape is not a rectangle or circle.")
+    return volume
+#Caden Ennis
+
+    
 
 
