@@ -6,15 +6,15 @@ def calculate_area(length, width=None, shape='rectangle'):
     Calculate the area of our containers.
 
     Parameters:
-        length (float): Length in inches (for circle, treated as diameter)
-        width (float|None): Width in inches (ignored for circle)
+        length (float): Length in inches
+        width (float): Width in inches
         shape (str): 'rectangle' or 'circle'
 
     Returns:
         float: area in square inches
 
     Raises:
-        ValueError: if shape is unknown or required inputs are missing
+        ValueError: if shape is unknown
     """
     if shape == 'rectangle':
         if width is None:
@@ -25,12 +25,9 @@ def calculate_area(length, width=None, shape='rectangle'):
         return math.pi * radius ** 2
     else:
         raise ValueError("The shape is not recognized.")
+#Caden Ennis
 
 
-if __name__ == '__main__':
-    # quick smoke tests
-    print("rectangle 4x3 ->", calculate_area(4, 3))
-    print("circle diameter 4 ->", calculate_area(4, shape='circle'))
 
 
 
