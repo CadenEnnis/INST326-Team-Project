@@ -17,4 +17,18 @@ Our library contains 18 specialized functions
 
 This project is done by Joshua, Sara, Caden, and Mai
 
+## Team Member Contributions
+
+
+
 ## Problem Statement
+
+
+
+## Code Review 
+
+
+
+## AI Usage
+
+
