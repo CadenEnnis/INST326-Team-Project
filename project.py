@@ -345,6 +345,7 @@ def calculate_season_change(current_date = None):
         'days_remaining': days_remaining
     }
 #Mai-Tien Pham
+
 def to_date(value):
     if isinstance(value, date):
         return value
