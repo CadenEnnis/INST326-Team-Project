@@ -1,9 +1,9 @@
 README
 # Garden Management System - Function Library
 
-**Team:** Christopher's Garden
-**Domain:** Garden Management
-**Course:** INST326 - Object-Oriented Programming for Information Science
+**Team:** Christopher's Garden  
+**Domain:** Garden Management  
+**Course:** INST326 - Object-Oriented Programming for Information Science  
 **Members:** Joshua Henderson, Sara Shokouhian, Caden Ennis, Mai-Tien Pham
 
 ## Project Overview
