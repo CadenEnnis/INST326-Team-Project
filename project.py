@@ -29,7 +29,7 @@ def calculate_area(length, width=None, shape='rectangle'):
 
 def validate_container_dimensions(length, width, depth):
     """
-    Validate that the container dimensions are reasonable sizes for the gardem.
+    Validate that the container dimensions are reasonable sizes for the garden.
     
     Parameters:
         length(float): Length in inches
@@ -222,5 +222,128 @@ def is_valid_ph_level(ph_value: float) -> bool:
         return False
 #Sara Shokouhian
 
+def calculate_plant_space(length, width = None, count = 1, shape = 'rectangle'):
+    """
+    Help to calculate what estimated amount of spacing is needed between plants in our containers.
+
+    Parameters:
+        length (float): Container length in inches
+        width (float): Container width in inches
+        count (int): Number of plants
+        shape (str): 'rectangle' or 'circle'
+
+    Returns:
+        float: Needed space in inches.
+
+    Raises:
+        ValueError: If count invalid
+        ValueError: Shape measurement is empty
+        ValueError: Shape unknown
+    """
+    if count <= 0:
+        raise ValueError("Count of plants must be a positive number.")
+
+    #Calculate area based on shape
+    if shape == 'rectangle':
+        if width is None:
+            raise ValueError("Width must be provided for rectangle.")
+        area = length * width
+    elif shape == 'circle':
+        radius = length / 2
+        area = math.pi * radius ** 2
+    else:
+        raise ValueError("Shape is not recognized.")
+
+    #Divide area by number of plants to get the area per plant.
+    area_per_plant = area / count
+
+    #Estimated spacing as the square root of area per plant.
+    spacing = math.sqrt(area_per_plant)
+    return spacing
+#Mai-Tien Pham
+
+def calculate_compost_needed(soil_volume, target_ratio = 0.25):
+    """
+    Calculate the estimated amount of compost based on the volume of soil needed to maintain plants.
+
+    Parameters:
+        soil_volume (float): Total soil volume in cubic inches.
+        target_ratio (float): Desired compost ratio wanted (range from 0.0 to 1.0, default ratio is 0.25)
+
+    Returns:
+        float: needed compost amount
+        float: needed soil amount
+
+    raises: 
+        ValueError: If soil volume is negative
+        ValueError: Target ratio is outside 0.0 and 1.0.
+    """
+    if soil_volume <= 0:
+        raise ValueError("Soil volume must be a positive number.")
+    if not (0.0 <= target_ratio <= 1.0):
+        raise ValueError("Target ratio must be between 0.0 and 1.0.")
+
+    compost_needed = soil_volume * target_ratio
+    soil_needed = soil_volume - compost_needed
+
+    return {
+        'compost_ratio_needed': compost_needed
+        'soil_ratio_needed': soil_needed
+    }
+#Mai-Tien Pham
+
+def calculate_season_change(current_date = None):
+    """
+    Calculate the estimated amount of time (in days) before the season's change.
+
+    Parameters:
+        current_date: The current date of the user using the function. If none, default will be today's date.
+
+    Returns:
+        str: next_season
+        int: days_remaining
+
+    Raises:
+        TypeError: If current_date is invalid
+    """
+
+    if current_date is none:
+        current_date = datetime.today()
+    elif not isinstance(current_date, datetime):
+        raise TypeError("Date is invalid.")
+
+    #Approximate of season start dates (year, month, day)
+    year = current_date.year
+    spring = datetime(year, 3, 20)
+    summer = datetime(year, 6, 21)
+    fall = datetime(year, 9, 22)
+    winter = datetime(year, 12, 21)
+
+    if current_date < spring:
+            next_season = 'Spring'
+            season_date = spring
+        elif current_date < summer:
+            next_season = 'Summer'
+            season_date = summer
+        elif current_date < fall:
+            next_season = 'Fall'
+            season_date = fall
+        elif current_date < winter:
+            next_season = 'Winter'
+            season_date = winter
+        else:
+            # After winter starts, next season is Spring of next year
+            next_season = 'Spring'
+            season_date = datetime(year + 1, 3, 20)
+
+    days_remaining = (season_date - current_date).days
+
+    return {
+        'current_date': current_date.strftime('%Y-%m-%d'),
+        'next_season': next_season,
+        'season_start_date': season_date.strftime('%Y-%m-%d'),
+        'days_remaining': days_remaining
+    }
+#Mai-Tien Pham
 
 
