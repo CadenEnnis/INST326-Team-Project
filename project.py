@@ -222,5 +222,125 @@ def is_valid_ph_level(ph_value: float) -> bool:
         return False
 #Sara Shokouhian
 
+def to_date(value):
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str):
+        parts = value.split("/")
+        if len(parts) != 3:
+            raise ValueError("Use MM/DD/YYYY format.")
+        month = int(parts[0])
+        day = int(parts[1])
+        year = int(parts[2])
+        return date(year, month, day)
+    else:
+        raise TypeError("Enter a date or a string in MM/DD/YYYY format.")
+# Joshua Henderson
+
+def days_until_frost(today: Dateish, first_frost_date: Dateish) -> int:
+    """
+    Calculate days until the first frost date.
+    Returns 0 if the frost date is today or it has passed.
+    """
+    t = _to_date(today)
+    f = _to_date(first_frost_date)
+    delta_days = (f - t).days
+    return delta_days if delta_days > 0 else 0
+#Joshua Henderson
+
+def is_safe_to_plant(plant_date, last_frost, tolerance="tender", extra_days=0):
+    """ Check if it's safe to plant based on frost tolerance."""
+    p = to_date(plant_date)
+    l = to_date(last_frost)
+
+    tolerance = tolerance.lower()
+
+    if tolerance == "tender":
+        offset = 0
+    elif tolerance == "half-hardy":
+        offset = -7    
+    elif tolerance == "hardy":
+        offset = -14  
+    else:
+        raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
+
+    safe_day = l + timedelta(days=offset + extra_days)
+    if p >= safe_day:
+        return True
+    else:
+        return False
+
+# Joshua Henderson
+
+def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
+    """Estimate total harvest yield using simple defaults."""
+    if plant_count < 0:
+        raise ValueError("Plant count must be 0 or more.")
+
+    plant_type = plant_type.lower()
+
+    # Random amount of LB default  yields
+    defaults = {
+        "tomato": 8.0,
+        "pepper": 3.0,
+        "cucumber": 5.0,
+        "zucchini": 6.0,
+        "eggplant": 4.0,
+        "lettuce": 1.0,
+        "kale": 1.5,
+        "bush bean": 2.0
+    }
+
+    if avg_per_plant is not None:
+        per_plant = avg_per_plant
+    elif plant_type in defaults:
+        per_plant = defaults[plant_type]
+    else:
+        raise ValueError("Unknown plant type. Please give avg_per_plant value.")
+
+    total = per_plant * plant_count
+
+    return {
+        "plant": plant_type,
+        "plants": plant_count,
+        "each": per_plant,
+        "total": round(total, 2)
+    }
+
+#Joshua Henderson
+
+def calculate_compost_ratio(green_weight, brown_weight):
+    """
+    Calculate the carbon-to-nitrogen (C:N) compost ratio.
+
+    'Green' materials = high nitrogen (like food scraps, grass)
+    'Brown' materials = high carbon (like leaves, wood chips)
+
+    Ideal compost ratio is ????
+    """
+
+    if green_weight <= 0 or brown_weight <= 0:
+        raise ValueError("Both green and brown weights must be greater than zero.")
+
+    green_cn = 15
+    brown_cn = 60
+
+    total_weight = green_weight + brown_weight
+    combined_ratio = ((green_cn * green_weight) + (brown_cn * brown_weight)) / total_weight
 
 
+    if combined_ratio < 25:
+        advice = "Add more brown materials (too much nitrogen)."
+    elif combined_ratio > 35:
+        advice = "Add more green materials (too much carbon)."
+    else:
+        advice = "Good balance! Compost mix is near ideal."
+
+    return {
+        "green_weight": green_weight,
+        "brown_weight": brown_weight,
+        "estimated_ratio": round(combined_ratio, 1),
+        "advice": advice
+    }
+
+#Joshua Henderson
