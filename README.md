@@ -4,7 +4,7 @@ README
 **Team:** Christopher's Garden
 **Domain:** Garden Management  
 **Course:** INST326 - Object-Oriented Programming for Information Science 
-**Members:** Joshua Henderson, Sara Shokouhian, Caden Ennis, and Mai-Tien Pham
+**Members:** Joshua Henderson, Sara Shokouhian, Caden Ennis, Mai-Tien Pham
 
 ## Project Overview
 
