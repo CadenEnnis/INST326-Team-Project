@@ -1,7 +1,7 @@
 README
 # Garden Management System - Function Library
 
-**Team:** Instructional Example Team  
+**Team:** Christopher's Garden
 **Domain:** Garden Management  
 **Course:** INST326 - Object-Oriented Programming for Information Science  
 
@@ -15,7 +15,7 @@ This function library provides essential utilities for garden management, coveri
 Our library contains 18 specialized functions
 
 
-This project is done by Joshua, Sara, Caden, and Mai
+This project is done by Joshua Henderson, Sara Shokouhian, Caden Ennis, and Mai-Tien Pham
 
 ## Team Member Contributions
 
