@@ -3,7 +3,8 @@ README
 
 **Team:** Christopher's Garden
 **Domain:** Garden Management  
-**Course:** INST326 - Object-Oriented Programming for Information Science  
+**Course:** INST326 - Object-Oriented Programming for Information Science 
+**Members:** Joshua Henderson, Sara Shokouhian, Caden Ennis, and Mai-Tien Pham
 
 ## Project Overview
 
@@ -29,9 +30,6 @@ to_date,
 days_until_frost,
 is_safe_to_plant,
 estimate_harvest_yield
-
-
-This project is done by Joshua Henderson, Sara Shokouhian, Caden Ennis, and Mai-Tien Pham
 
 ## Team Member Contributions
 
