@@ -308,39 +308,3 @@ def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
     }
 
 #Joshua Henderson
-
-def calculate_compost_ratio(green_weight, brown_weight):
-    """
-    Calculate the carbon-to-nitrogen (C:N) compost ratio.
-
-    'Green' materials = high nitrogen (like food scraps, grass)
-    'Brown' materials = high carbon (like leaves, wood chips)
-
-    Ideal compost ratio is ????
-    """
-
-    if green_weight <= 0 or brown_weight <= 0:
-        raise ValueError("Both green and brown weights must be greater than zero.")
-
-    green_cn = 15
-    brown_cn = 60
-
-    total_weight = green_weight + brown_weight
-    combined_ratio = ((green_cn * green_weight) + (brown_cn * brown_weight)) / total_weight
-
-
-    if combined_ratio < 25:
-        advice = "Add more brown materials (too much nitrogen)."
-    elif combined_ratio > 35:
-        advice = "Add more green materials (too much carbon)."
-    else:
-        advice = "Good balance! Compost mix is near ideal."
-
-    return {
-        "green_weight": green_weight,
-        "brown_weight": brown_weight,
-        "estimated_ratio": round(combined_ratio, 1),
-        "advice": advice
-    }
-
-#Joshua Henderson
