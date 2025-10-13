@@ -33,16 +33,20 @@ estimate_harvest_yield - estimates total harvest yield
 
 ## Team Member Contributions
 
-
+Caden Ennis - created ReadMe/created calculate_area, validate_container_measurement, measurement_conversion, calculate_soil_volume  
+Sara Shokouhian - created validate_boolean_input, format_planting_date, parse_plant_species, is_valid_ph_level  
+Joshua Henderson - created to_date, days_until_frost, is_safe_to_plant, estimate_harvest_yield  
+Mai-Tien Pham - calculate_plant_space, calculate_compost_needed, calculate_season_change  
 
 ## Problem Statement
 
-
+We believed that Professor Dempwolf needed help in organizing and managing his garden, so we have come together to create a program to make managing his garden easier for him.  
 
 ## Code Review 
 
-
+Each team member's code has been reviewed by another teammate and has been approved. 
 
 ## AI Usage
 
+AI has been used in our project to make writing our intended code faster by using the predictive text assistance built into VSC, but it was never used to generate our code entirely. 
 
