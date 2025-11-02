@@ -432,3 +432,141 @@ def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
     }
 
 #Joshua Henderson
+
+class PlantingSchedule:
+    """Manages planting dates, seasons, and tracks important dates."""
+    
+    def __init__(self, location="Unknown"):
+        """Initialize a planting schedule.
+        
+        Args:
+            location (str): Planting location area
+        """
+        self._location = location
+        self._plantings = []
+    
+    @property
+    def location(self):
+        """str: Planting location."""
+        return self._location
+    
+    def parse_date(self, value):
+        """Parse date from string format."""
+        if isinstance(value, date):
+            return value
+        if isinstance(value, str):
+            parts = value.split("/")
+            if len(parts) != 3:
+                raise ValueError("Use MM/DD/YYYY format")
+            month, day, year = int(parts[0]), int(parts[1]), int(parts[2])
+            return date(year, month, day)
+        raise TypeError("Date must be string (MM/DD/YYYY) or date object")
+    
+    def get_season_info(self, check_date = None):
+        """Get current season information based on date.
+        
+        Args:
+            check_date (date or None): Date to check (default: today)
+            
+        Returns:
+            dict: Season information including next season and days remaining
+        """
+        if check_date is None:
+            check_date = date.today()
+        elif isinstance(check_date, str):
+            check_date = self.parse_date(check_date)
+        elif not isinstance(check_date, date):
+            raise TypeError("Must be date object or string")
+        
+        # The season start dates for the year
+        year = check_date.year
+        spring = date(year, 3, 20)
+        summer = date(year, 6, 21)
+        fall = date(year, 9, 22)
+        winter = date(year, 12, 21)
+        
+        # Determine current season and next season
+        if check_date < spring:
+            current_season = 'Winter'
+            next_season = 'Spring'
+            season_date = spring
+        elif check_date < summer:
+            current_season = 'Spring'
+            next_season = 'Summer'
+            season_date = summer
+        elif check_date < fall:
+            current_season = 'Summer'
+            next_season = 'Fall'
+            season_date = fall
+        elif check_date < winter:
+            current_season = 'Fall'
+            next_season = 'Winter'
+            season_date = winter
+        else:
+            current_season = 'Winter'
+            next_season = 'Spring'
+            season_date = date(year + 1, 3, 20)
+        
+        days_remaining = (season_date - check_date).days
+        
+        return {
+            'date': check_date.strftime('%Y-%m-%d'),
+            'current_season': current_season,
+            'next_season': next_season,
+            'season_start_date': season_date.strftime('%Y-%m-%d'),
+            'days_until_next_season': days_remaining
+        }
+    
+    def add_planting_record(self, plant_name, plant_date, container_id=None):
+        """Record when a new plant is added to the garden.
+        
+        Args:
+            plant_name (str): Name of plant
+            plant_date (str or date): Date planted
+            container_id (str): Optional container identifier
+        """
+        planting = {
+            'plant': plant_name,
+            'date': self.parse_date(plant_date),
+            'container': container_id
+        }
+        self._plantings.append(planting)
+    
+    def get_planting_history(self):
+        """Get all recorded plantings.
+        
+        Returns:
+            list: All planting records
+        """
+        return self._plantings.copy()
+    
+    def get_plantings_by_season(self, season):
+        """Get all plantings for a specific season.
+        
+        Args:
+            season (str): Season name ('Spring', 'Summer', 'Fall', 'Winter')
+            
+        Returns:
+            list: Plantings in that season
+        """
+        season = season.capitalize()
+        valid_seasons = ['Spring', 'Summer', 'Fall', 'Winter']
+        
+        if season not in valid_seasons:
+            raise ValueError(f"Season must be one of: {', '.join(valid_seasons)}")
+        
+        seasonal_plantings = []
+        for planting in self._plantings:
+            plant_date = planting['date']
+            season_info = self.get_season_info(plant_date)
+            if season_info['current_season'] == season:
+                seasonal_plantings.append(planting)
+        
+        return seasonal_plantings
+    
+    def __str__(self):
+        return f"Planting Schedule ({self._location}) - {len(self._plantings)} plantings recorded"
+    
+    def __repr__(self):
+        return f"PlantingSchedule(location='{self._location}')"
+#Mai-Tien Pham
