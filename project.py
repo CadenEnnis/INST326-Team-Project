@@ -345,93 +345,147 @@ def calculate_season_change(current_date = None):
         'days_remaining': days_remaining
     }
 #Mai-Tien Pham
-
-def to_date(value):
-    if isinstance(value, date):
+    def to_date(value):
+        if isinstance(value, date):
         return value
-    if isinstance(value, str):
+        if isinstance(value, str):
         parts = value.split("/")
-        if len(parts) != 3:
+            if len(parts) != 3:
             raise ValueError("Use MM/DD/YYYY format.")
         month = int(parts[0])
         day = int(parts[1])
         year = int(parts[2])
-        return date(year, month, day)
-    else:
-        raise TypeError("Enter a date or a string in MM/DD/YYYY format.")
-# Joshua Henderson
+            return date(year, month, day)
+        else:
+            raise TypeError("Enter a date or a string in MM/DD/YYYY format.")
+    # Joshua Henderson
 
-def days_until_frost(today: Dateish, first_frost_date: Dateish) -> int:
-    """
-    Calculate days until the first frost date.
-    Returns 0 if the frost date is today or it has passed.
-    """
-    t = _to_date(today)
-    f = _to_date(first_frost_date)
-    delta_days = (f - t).days
-    return delta_days if delta_days > 0 else 0
-#Joshua Henderson
+    def days_until_frost(today: Dateish, first_frost_date: Dateish) -> int:
 
-def is_safe_to_plant(plant_date, last_frost, tolerance="tender", extra_days=0):
+        t = _to_date(today)
+        f = _to_date(first_frost_date)
+        delta_days = (f - t).days
+        return delta_days if delta_days > 0 else 0
+    #Joshua Henderson
+
+    def is_safe_to_plant(plant_date, last_frost, tolerance="tender", extra_days=0):
     """ Check if it's safe to plant based on frost tolerance."""
-    p = to_date(plant_date)
-    l = to_date(last_frost)
+        p = to_date(plant_date)
+        l = to_date(last_frost)
 
-    tolerance = tolerance.lower()
+        tolerance = tolerance.lower()
 
-    if tolerance == "tender":
+        if tolerance == "tender":
         offset = 0
-    elif tolerance == "half-hardy":
+        elif tolerance == "half-hardy":
         offset = -7    
-    elif tolerance == "hardy":
+        elif tolerance == "hardy":
         offset = -14  
-    else:
-        raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
+        else:
+            raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
 
-    safe_day = l + timedelta(days=offset + extra_days)
-    if p >= safe_day:
-        return True
-    else:
-        return False
+        safe_day = l + timedelta(days=offset + extra_days)
+        if p >= safe_day:
+            return True
+        else:
+            return False
 
-# Joshua Henderson
+    # Joshua Henderson
 
-def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
+    def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
     """Estimate total harvest yield using simple defaults."""
-    if plant_count < 0:
-        raise ValueError("Plant count must be 0 or more.")
+        if plant_count < 0:
+            raise ValueError("Plant count must be 0 or more.")
 
-    plant_type = plant_type.lower()
+        plant_type = plant_type.lower()
 
-    # Random amount of LB default  yields
-    defaults = {
-        "tomato": 8.0,
-        "pepper": 3.0,
-        "cucumber": 5.0,
-        "zucchini": 6.0,
-        "eggplant": 4.0,
-        "lettuce": 1.0,
-        "kale": 1.5,
-        "bush bean": 2.0
-    }
+        # Random amount of LB default  yields
+        defaults = {
+            "tomato": 8.0,
+            "pepper": 3.0,
+            "cucumber": 5.0,
+            "zucchini": 6.0,
+            "eggplant": 4.0,
+            "lettuce": 1.0,
+            "kale": 1.5,
+            "bush bean": 2.0
+        }    
 
-    if avg_per_plant is not None:
+        if avg_per_plant is not None:
         per_plant = avg_per_plant
-    elif plant_type in defaults:
+        elif plant_type in defaults:
         per_plant = defaults[plant_type]
-    else:
-        raise ValueError("Unknown plant type. Please give avg_per_plant value.")
+        else:
+            raise ValueError("Unknown plant type. Please give avg_per_plant value.")
 
-    total = per_plant * plant_count
+        total = per_plant * plant_count
 
-    return {
-        "plant": plant_type,
-        "plants": plant_count,
-        "each": per_plant,
-        "total": round(total, 2)
-    }
+        return {
+            "plant": plant_type,
+            "plants": plant_count,
+            "each": per_plant,
+            "total": round(total, 2)
+        }
 
-#Joshua Henderson
+    #Joshua Henderson
+class Garden:
+    def __init__(self, name, last_frost, first_frost):
+        self._name = name
+        self._last_frost = to_date(last_frost)
+        self._first_frost = to_date(first_frost)
+        self._plants = []
+
+    def name(self):
+        return self._name
+
+    def last_frost(self):
+        return self._last_frost
+
+    def first_frost(self):
+        return self._first_frost
+
+    def plants(self):
+        return list(self._plants)
+
+    def add_plant(self, plant_type, count, tolerance="tender", avg_per_plant=None):
+        if not plant_type:
+            raise ValueError("Plant type required.")
+        if count < 0:
+            raise ValueError("Count must be >= 0.")
+        tolerance = tolerance.lower()
+        if tolerance not in ["tender", "half-hardy", "hardy"]:
+            raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
+        self._plants.append({
+            "plant_type": plant_type,
+            "count": count,
+            "tolerance": tolerance,
+            "avg_per_plant": avg_per_plant
+        })
+
+    def is_safe_on(self, plant_date):
+        results = []
+        for p in self._plants:
+            safe = is_safe_to_plant(plant_date, self._last_frost, p["tolerance"])
+            results.append((p["plant_type"], safe))
+        return results
+
+    def total_yield(self):
+        total = 0
+        details = []
+        for p in self._plants:
+            y = estimate_harvest_yield(p["plant_type"], p["count"], p["avg_per_plant"])
+            total += y["total"]
+            details.append(y)
+        return {"garden": self._name, "total_lb": total, "by_plant": details}
+
+    def days_until_first_frost(self, today):
+        return days_until_frost(today, self._first_frost)
+
+    def __str__(self):
+        return f"{self._name} Garden with {len(self._plants)} plants."
+
+    def __repr__(self):
+        return f"Garden(name={self._name}, last_frost={self._last_frost}, first_frost={self._first_frost})"
 
 class PlantingSchedule:
     """Manages planting dates, seasons, and tracks important dates."""
