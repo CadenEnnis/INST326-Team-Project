@@ -37,7 +37,7 @@ Caden Ennis - created ReadMe/created calculate_area, validate_container_measurem
 Sara Shokouhian - created validate_boolean_input, format_planting_date, parse_plant_species, is_valid_ph_level  
 Joshua Henderson - created to_date, days_until_frost, is_safe_to_plant, estimate_harvest_yield  
 Mai-Tien Pham - calculate_plant_space, calculate_compost_needed, calculate_season_change  
-
+Sara Shokouhian – worked on the Plant and Soil classes for the OOP version. Used some of our Project 1 functions (parse_plant_species, format_planting_date, is_valid_ph_level) and added new methods like days_since_planted, mark_ready_for_harvest, and check_compatibility to connect the soil and plant parts together.
 ## Problem Statement
 
 We believed that Professor Dempwolf needed help in organizing and managing his garden, so we have come together to create a program to make managing his garden easier for him.  
