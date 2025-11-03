@@ -624,3 +624,60 @@ class PlantingSchedule:
     def __repr__(self):
         return f"PlantingSchedule(location='{self._location}')"
 #Mai-Tien Pham
+
+class ContainerManagement:
+    """Designed to manage our garden containers, making sure to include size, soil, and compost calculations."""
+
+    def __init__(self):
+        """Initializing the container management with an empty list."""
+        self._containers = []
+
+    def add_container(self, container_id, length, width, depth, shape='rectangle'):
+        """Add a new container to the management system.
+
+        Parameters:
+            container_id (str): Unique ID for the container
+            length (float): Length in inches
+            width (float): Width in inches
+            depth (float): Depth in inches
+            shape (str): 'rectangle' or 'circle'
+        """
+        validate_container_dimensions(length, width if shape == 'rectangle' else 1, depth)
+
+        area = calculate_area(length, width, shape)
+        volume = calculate_soil_volume(length, width if shape == 'rectangle' else 1, depth, shape)
+        container = {
+            'id': container_id,
+            'shape': shape,
+            'length': length,
+            'width': width,
+            'depth': depth,
+            'area_sq_in': round(area, 2),
+            'volume_cu_in': round(volume, 2)}
+        self._containers.append(container)
+        return container
+    
+    def get_container(self, container_id):
+        """Retrieve a container by its ID."""
+        for container in self._containers:
+            if container['id'] == container_id:
+                return container
+        raise ValueError(f"Container with ID {container_id} not found.")
+    
+    def calculate_compost(self, container_id, ratio = 0.25):
+        """Calculates the comport and soil needed for a container."""
+        container = self.get_cotainer(container_id)
+        compost_info = calculate_compost_needed(container['volume_cu_in'], ratio)
+        return compost_info
+    
+    def list_containers(self):
+        """Returns all of the containers being managed."""
+        return self._containers.copy()
+    
+    def __len__(self):
+        """Returns the number of containers being managed."""
+        return len(self._containers)
+    
+    def __str__(self):
+        return f"ContainerManagement - {len(self._containers)} containers managed."
+# Caden Ennis
