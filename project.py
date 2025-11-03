@@ -637,10 +637,7 @@ class ContainerManagement:
         """
 
     def __init__(self):
-        """Initializing the container management with an empty list.
-        
-        Parameters:
-            max_containers: max number of containers that can be stored"""
+        """Initializing the container management with an empty list."""
         self._containers = []
 
     def add_container(self, container_id, length, width, depth, shape='rectangle'):
@@ -652,6 +649,9 @@ class ContainerManagement:
             width (float): Width in inches
             depth (float): Depth in inches
             shape (str): 'rectangle' or 'circle'
+
+        Returns:
+            dict: Details about the container."
         """
         validate_container_dimensions(length, width if shape == 'rectangle' else 1, depth)
 
@@ -669,14 +669,24 @@ class ContainerManagement:
         return container
     
     def get_container(self, container_id):
-        """Retrieve a container by its ID."""
+        """Retrieve a container by its ID.
+        
+        Parameters: 
+            container_id: The ID of the container to retrieve"""
         for container in self._containers:
             if container['id'] == container_id:
                 return container
         raise ValueError(f"Container with ID {container_id} not found.")
     
     def calculate_compost(self, container_id, ratio = 0.25):
-        """Calculates the comport and soil needed for a container."""
+        """Calculates the comport and soil needed for a container.
+        
+        Parameters:
+            container_id: The ID of the container
+            ratio: Compost ratio defaulted at 0.25
+            
+        Returns:
+            dict: compost and soil ratio values"""
         container = self.get_cotainer(container_id)
         compost_info = calculate_compost_needed(container['volume_cu_in'], ratio)
         return compost_info
