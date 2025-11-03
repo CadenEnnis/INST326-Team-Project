@@ -626,15 +626,26 @@ class PlantingSchedule:
 #Mai-Tien Pham
 
 class ContainerManagement:
-    """Designed to manage our garden containers, making sure to include size, soil, and compost calculations."""
+    """Designed to manage our garden containers, making sure to include size, soil, and compost calculations.
+    
+    This class includes functions such as:
+        - validate_container_dimensions()
+        - calculate_area()
+        - calculate_soil_volume()
+        - calculate_compost_volume()
+        
+        """
 
     def __init__(self):
-        """Initializing the container management with an empty list."""
+        """Initializing the container management with an empty list.
+        
+        Parameters:
+            max_containers: max number of containers that can be stored"""
         self._containers = []
 
     def add_container(self, container_id, length, width, depth, shape='rectangle'):
         """Add a new container to the management system.
-
+        
         Parameters:
             container_id (str): Unique ID for the container
             length (float): Length in inches
