@@ -702,3 +702,145 @@ class ContainerManagement:
     def __str__(self):
         return f"ContainerManagement - {len(self._containers)} containers managed."
 # Caden Ennis
+
+class Plant:
+    """Represents a plant with species, planting date, and soil requirements."""
+
+    def __init__(self, species, planting_date, required_ph):
+        """
+        Initialize a Plant object.
+        
+        Args:
+            species (str): Scientific or common name of the plant.
+            planting_date (str): Date the plant was planted (YYYY-MM-DD).
+            required_ph (float): Ideal soil pH for this plant.
+
+        Raises:
+            ValueError: If inputs are invalid.
+        """
+        if not isinstance(species, str) or not species.strip():
+            raise ValueError("Species name must be a valid string.")
+        if not self.is_valid_date(planting_date):
+            raise ValueError("Planting date must be in YYYY-MM-DD format.")
+        if not self.is_valid_ph(required_ph):
+            raise ValueError("pH must be between 0 and 14.")
+
+        self._species = self.parse_plant_species(species)
+        self._planting_date = planting_date
+        self._required_ph = required_ph
+        self._harvest_ready = False
+
+    @property
+    def species(self):
+        """str: The species name (read-only)."""
+        return self._species
+
+    @property
+    def planting_date(self):
+        """str: The date when the plant was planted."""
+        return self._planting_date
+
+    @property
+    def required_ph(self):
+        """float: The ideal pH level for this plant."""
+        return self._required_ph
+
+    def mark_ready_for_harvest(self):
+        """Mark the plant as ready for harvest."""
+        self._harvest_ready = True
+
+    def is_ready(self):
+        """Return True if the plant is ready for harvest."""
+        return self._harvest_ready
+
+    def days_since_planted(self):
+        """Return how many days have passed since the plant was planted."""
+        date_planted = datetime.strptime(self._planting_date, "%Y-%m-%d")
+        return (datetime.now() - date_planted).days
+
+    # -----------------------
+    # Integrated Project 1 functions
+    # -----------------------
+    def parse_plant_species(self, name):
+        """Extracts first word of the scientific plant name."""
+        return name.split()[0]
+
+    def format_planting_date(self, date_obj):
+        """Formats the date in YYYY-MM-DD format."""
+        return date_obj.strftime("%Y-%m-%d")
+
+    def is_valid_ph(self, ph_value):
+        """Check if the pH level is valid (between 0 and 14)."""
+        return isinstance(ph_value, (int, float)) and 0 <= ph_value <= 14
+
+    def is_valid_date(self, date_str):
+        """Validate date format."""
+        try:
+            datetime.strptime(date_str, "%Y-%m-%d")
+            return True
+        except ValueError:
+            return False
+
+    def __str__(self):
+        status = "Ready" if self._harvest_ready else "Growing"
+        return f"{self._species} planted on {self._planting_date} ({status})"
+
+    def __repr__(self):
+        return f"Plant(species='{self._species}', date='{self._planting_date}', pH={self._required_ph})"
+#Sara Shokouhian
+
+class Soil:
+    """Represents soil with its type and pH level."""
+
+    def __init__(self, soil_type, ph_level):
+        """
+        Initialize a Soil object.
+
+        Args:
+            soil_type (str): The soil type (e.g., 'loamy', 'clay', 'sandy').
+            ph_level (float): The soil's pH level.
+
+        Raises:
+            ValueError: If parameters are invalid.
+        """
+        if not isinstance(soil_type, str) or not soil_type.strip():
+            raise ValueError("Soil type must be a valid string.")
+        if not self.is_valid_ph(ph_level):
+            raise ValueError("pH must be between 0 and 14.")
+
+        self._soil_type = soil_type
+        self._ph_level = ph_level
+
+    @property
+    def soil_type(self):
+        """str: Type of soil."""
+        return self._soil_type
+
+    @property
+    def ph_level(self):
+        """float: pH level of the soil."""
+        return self._ph_level
+
+    def adjust_ph(self, new_ph):
+        """Adjust soil pH level if needed."""
+        if not self.is_valid_ph(new_ph):
+            raise ValueError("Invalid pH level.")
+        self._ph_level = new_ph
+        return f"Soil pH adjusted to {new_ph}"
+
+    def check_compatibility(self, plant):
+        """Check if soil pH is compatible with a given plant."""
+        if abs(self._ph_level - plant.required_ph) <= 1:
+            return True
+        return False
+
+    def is_valid_ph(self, ph_value):
+        """Validate that pH number is between 0 and 14."""
+        return isinstance(ph_value, (int, float)) and 0 <= ph_value <= 14
+
+    def __str__(self):
+        return f"{self._soil_type.capitalize()} soil (pH {self._ph_level})"
+
+    def __repr__(self):
+        return f"Soil(type='{self._soil_type}', pH={self._ph_level})"
+#Sara Shokouhian
