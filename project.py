@@ -428,6 +428,128 @@ def calculate_season_change(current_date = None):
         }
 
     #Joshua Henderson
+class AbstractContainer(ABC):
+    """Abstract base class for garden containers."""
+
+    def __init__(self, container_id, length, depth):
+        if not isinstance(container_id, str) or not container_id:
+            raise ValueError("Container ID must be a non-empty string.")
+        if length <= 0 or depth <= 0:
+            raise ValueError("Length and Depth must be positive.")
+        self._id = container_id
+        self._length = length   # diameter for circle
+        self._depth = depth
+        self._area = self.calculate_area()
+        self._volume = self.calculate_volume()
+    @property
+    def container_id(self):
+        return self._id
+
+    @property
+    def area(self):
+        return self._area
+
+    @property
+    def volume(self):
+        return self._volume
+
+    @abstractmethod
+    def get_shape_name(self):
+        pass
+
+    @abstractmethod
+    def calculate_area(self):
+        pass
+
+    @abstractmethod
+    def calculate_volume(self):
+        pass
+
+    def __str__(self):
+        return f"{self.get_shape_name().capitalize()} Container ID:{self._id}, Area: {round(self.area,2)} sq in, Volume: {round(self.volume,2)} cu in"
+
+
+class RectangularContainer(AbstractContainer):
+    def __init__(self, container_id, length, width, depth):
+        validate_container_dimensions(length, width, depth)
+        self._width = width
+        super().__init__(container_id, length, depth)
+
+    def get_shape_name(self):
+        return "rectangle"
+
+    def calculate_area(self):
+        return self._length * self._width
+
+    def calculate_volume(self):
+        return self.area * self._depth
+
+    def __str__(self):
+        base_str = super().__str__()
+        return f"{base_str} (Dimensions: {self._length}x{self._width}x{self._depth} in)"
+
+
+class CircularContainer(AbstractContainer):
+    def __init__(self, container_id, diameter, depth):
+        validate_container_dimensions(diameter, 1, depth)  # width dummy=1
+        self._diameter = diameter
+        self._radius = diameter / 2
+        super().__init__(container_id, diameter, depth)
+
+    def get_shape_name(self):
+        return "circle"
+
+    def calculate_area(self):
+        return math.pi * self._radius ** 2
+
+    def calculate_volume(self):
+        return self.area * self._depth
+
+    def __str__(self):
+        base_str = super().__str__()
+        return f"{base_str} (Diameter: {self._diameter} in, Depth: {self._depth} in)"
+        #Sara Shokouhian
+
+class ContainerManagement:
+    """Manages AbstractContainer objects via composition."""
+
+    def __init__(self):
+        self._containers = []
+
+    def add_container(self, container_id, length, width=None, depth=None, shape='rectangle'):
+        if shape == 'rectangle':
+            if width is None or depth is None:
+                raise ValueError("Width and depth required for rectangle")
+            container = RectangularContainer(container_id, length, width, depth)
+        elif shape == 'circle':
+            if depth is None:
+                raise ValueError("Depth required for circle")
+            container = CircularContainer(container_id, length, depth)
+        else:
+            raise ValueError(f"Unknown shape: {shape}")
+        self._containers.append(container)
+        return container
+
+    def get_container(self, container_id):
+        for c in self._containers:
+            if c.container_id == container_id:
+                return c
+        raise ValueError(f"Container with ID {container_id} not found.")
+
+    def calculate_compost(self, container_id, ratio=0.25):
+        container = self.get_container(container_id)
+        return calculate_compost_needed(container.volume, ratio)
+
+    def list_containers(self):
+        return self._containers.copy()
+
+    def __len__(self):
+        return len(self._containers)
+
+    def __str__(self):
+        return f"ContainerManagement - {len(self._containers)} containers managed."
+#Sara Shokouhian
+
 class Garden:
     def __init__(self, name, last_frost, first_frost):
         self._name = name
