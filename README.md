@@ -33,7 +33,7 @@ estimate_harvest_yield - estimates total harvest yield
 
 ## Team Member Contributions
 
-Caden Ennis - created ReadMe/created calculate_area, validate_container_measurement, measurement_conversion, calculate_soil_volume, helped implement ABC code in and has worked on making sure structure is correct, 
+Caden Ennis - created ReadMe/created calculate_area, validate_container_measurement, measurement_conversion, calculate_soil_volume, helped implement ABC code in and has worked on making sure structure is correct, added SquareContainer Abstract Class
 Sara Shokouhian - created validate_boolean_input, format_planting_date, parse_plant_species, is_valid_ph_level  
 Joshua Henderson - created to_date, days_until_frost, is_safe_to_plant, estimate_harvest_yield  
 Mai-Tien Pham - calculate_plant_space, calculate_compost_needed, calculate_season_change  
