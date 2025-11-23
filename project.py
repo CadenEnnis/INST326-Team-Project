@@ -1,5 +1,5 @@
+from abc import ABC, abstractmethod
 import math
-
 
 def calculate_area(length, width=None, shape='rectangle'):
     """
