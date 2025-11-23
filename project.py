@@ -510,6 +510,24 @@ class CircularContainer(AbstractContainer):
         return f"{base_str} (Diameter: {self._diameter} in, Depth: {self._depth} in)"
         #Sara Shokouhian
 
+class SquareContainer(AbstractContainer):
+    def __init__(self, container_id, side_length, depth):
+        if side_length <= 0 or depth <= 0:
+            raise ValueError("Side length and depth must be positive.")
+        self._side_length = side_length
+        super().__init__(container_id, side_length, depth)
+
+    def calculate_area(self):
+        return self._side_length ** 2
+
+    def calculate_volume(self):
+        return self.area * self._depth
+
+    def __str__(self):
+        base_str = super().__str__()
+        return f"{base_str} (side: {self._side_length} in, Depth: {self._depth} in}
+#Caden Ennis
+
 class ContainerManagement:
     """Manages AbstractContainer objects via composition."""
 
