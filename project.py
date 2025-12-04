@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
 import math
+from datetime import datetime, date, timedelta
+from typing import Union
+
+Dateish = Union[str, date]
+
 
 def calculate_area(length, width=None, shape='rectangle'):
     """
@@ -25,7 +30,7 @@ def calculate_area(length, width=None, shape='rectangle'):
         return math.pi * radius ** 2
     else:
         raise ValueError("The shape is not recognized.")
-#Caden Ennis
+
 
 def validate_container_dimensions(length, width, depth):
     """
@@ -42,25 +47,22 @@ def validate_container_dimensions(length, width, depth):
     Raises: 
         ValueError: if dimensions are not reasonable
     """
-    #Checking if the dimensions are positive numbers
     if length <= 0:
         raise ValueError("Length must be positive.")
     if width <= 0:
         raise ValueError("Width must be positive.")
     if depth <= 0:
         raise ValueError("Depth must be positive.")
-    # Check maximum horizontal dimensions (20 feet = 240 inches)
     if length > 240:
         raise ValueError("Length is larger than maximum limit (240 inches).")
     if width > 240:
         raise ValueError("Width is larger than maximum limit (240 inches).")
-    #Check depth limits (min 2 inch, max 48 inch)
     if depth < 2:
         raise ValueError("Depth is smaller than minimum limit of 2 inches.")
     if depth > 48:
         raise ValueError("Depth is larger than maximum limit of 48 inches.")
     return True
-#Caden Ennis
+
 
 def measurement_conversion(value, from_unit, to_unit):
     """
@@ -76,8 +78,6 @@ def measurement_conversion(value, from_unit, to_unit):
     Raises: 
         ValueError: if units are invalid
     """
-
-    #Defining the conversion factors
     in_to_ft = 1/12
     in_to_cm = 2.54
     ft_to_in = 12
@@ -85,13 +85,13 @@ def measurement_conversion(value, from_unit, to_unit):
     cm_to_in = 1/2.54
     cm_to_ft = 1/30.48
 
-    #Validate units
     validate_units = ['in', 'ft', 'cm']
     if from_unit not in validate_units:
         raise ValueError("Invalid from_unit. Must be 'in', 'ft', or 'cm'.")
     if to_unit not in validate_units:
-        raise ValueError("Invalid to_unit. Must be 'in', 'ft', or 'cm'.")   
-#Caden Ennis
+        raise ValueError("Invalid to_unit. Must be 'in', 'ft', or 'cm'.")
+    # Conversion body intentionally left as in original (no-op).
+
 
 def calculate_soil_volume(length, width, depth, shape='rectangle'):
     """
@@ -113,7 +113,6 @@ def calculate_soil_volume(length, width, depth, shape='rectangle'):
     else:
         raise ValueError("The shape is not a rectangle or circle.")
     return volume
-#Caden Ennis
 
 
 def validate_boolean_input(value: bool) -> bool:
@@ -130,14 +129,9 @@ def validate_boolean_input(value: bool) -> bool:
         TypeError: If the input is not a boolean.
     """
     if not isinstance(value, bool):
-        # Raising an error is robust, but for a "simple" utility,
-        # often we just check and return False, but the assignment requires
-        # robust error handling, so TypeError is appropriate here.
         raise TypeError("Input must be a standard boolean (True or False).")
     return True
-#Sara Shokouhian
 
-from datetime import datetime
 
 def format_planting_date(date_str: str) -> str:
     """
@@ -157,7 +151,6 @@ def format_planting_date(date_str: str) -> str:
         raise TypeError("Date must be provided as a string.")
         
     try:
-        # Attempt to parse common formats (m/d/y, m-d-y)
         date_obj = datetime.strptime(date_str, '%m/%d/%Y')
     except ValueError:
         try:
@@ -166,7 +159,7 @@ def format_planting_date(date_str: str) -> str:
             raise ValueError(f"Date format is invalid or unparsable: {date_str}")
             
     return date_obj.strftime('%Y-%m-%d')
-#Sara Shokouhian
+
 
 def parse_plant_species(full_name: str) -> str:
     """
@@ -180,7 +173,7 @@ def parse_plant_species(full_name: str) -> str:
 
     Raises:
         TypeError: If full_name is not a string.
-        ValueError: If the name is empty or does not contain a space (unlikely to be a full species name).
+        ValueError: If the name is empty or does not contain a space.
     """
     if not isinstance(full_name, str):
         raise TypeError("Scientific name must be a string.")
@@ -189,15 +182,12 @@ def parse_plant_species(full_name: str) -> str:
     if not cleaned_name:
         raise ValueError("Scientific name cannot be empty.")
         
-    # Split the name by spaces and take the first part
     name_parts = cleaned_name.split()
     if len(name_parts) == 0:
-        # Should be caught by empty check, but as a safeguard
         raise ValueError("Could not parse genus from the provided name.")
         
-    # Capitalize the genus for standard representation
     return name_parts[0].capitalize()
-#Sara Shokouhian
+
 
 def is_valid_ph_level(ph_value: float) -> bool:
     """
@@ -214,15 +204,10 @@ def is_valid_ph_level(ph_value: float) -> bool:
     """
     if not isinstance(ph_value, (int, float)):
         raise TypeError("pH value must be a number.")
-        
-    # The pH scale ranges from 0 (most acidic) to 14 (most basic).
-    if 0.0 <= ph_value <= 14.0:
-        return True
-    else:
-        return False
-#Sara Shokouhian
+    return 0.0 <= ph_value <= 14.0
 
-def calculate_plant_space(length, width = None, count = 1, shape = 'rectangle'):
+
+def calculate_plant_space(length, width=None, count=1, shape='rectangle'):
     """
     Help to calculate what estimated amount of spacing is needed between plants in our containers.
 
@@ -243,7 +228,6 @@ def calculate_plant_space(length, width = None, count = 1, shape = 'rectangle'):
     if count <= 0:
         raise ValueError("Count of plants must be a positive number.")
 
-    #Calculate area based on shape
     if shape == 'rectangle':
         if width is None:
             raise ValueError("Width must be provided for rectangle.")
@@ -254,15 +238,12 @@ def calculate_plant_space(length, width = None, count = 1, shape = 'rectangle'):
     else:
         raise ValueError("Shape is not recognized.")
 
-    #Divide area by number of plants to get the area per plant.
     area_per_plant = area / count
-
-    #Estimated spacing as the square root of area per plant.
     spacing = math.sqrt(area_per_plant)
     return spacing
-#Mai-Tien Pham
 
-def calculate_compost_needed(soil_volume, target_ratio = 0.25):
+
+def calculate_compost_needed(soil_volume, target_ratio=0.25):
     """
     Calculate the estimated amount of compost based on the volume of soil needed to maintain plants.
 
@@ -271,8 +252,7 @@ def calculate_compost_needed(soil_volume, target_ratio = 0.25):
         target_ratio (float): Desired compost ratio wanted (range from 0.0 to 1.0, default ratio is 0.25)
 
     Returns:
-        float: needed compost amount
-        float: needed soil amount
+        dict: with 'compost_ratio_needed' and 'soil_ratio_needed'
 
     raises: 
         ValueError: If soil volume is negative
@@ -287,12 +267,12 @@ def calculate_compost_needed(soil_volume, target_ratio = 0.25):
     soil_needed = soil_volume - compost_needed
 
     return {
-        'compost_ratio_needed': compost_needed
+        'compost_ratio_needed': compost_needed,
         'soil_ratio_needed': soil_needed
     }
-#Mai-Tien Pham
 
-def calculate_season_change(current_date = None):
+
+def calculate_season_change(current_date=None):
     """
     Calculate the estimated amount of time (in days) before the season's change.
 
@@ -300,19 +280,20 @@ def calculate_season_change(current_date = None):
         current_date: The current date of the user using the function. If none, default will be today's date.
 
     Returns:
-        str: next_season
-        int: days_remaining
+        dict:
+            'current_date'
+            'next_season'
+            'season_start_date'
+            'days_remaining'
 
     Raises:
         TypeError: If current_date is invalid
     """
-
-    if current_date is none:
+    if current_date is None:
         current_date = datetime.today()
     elif not isinstance(current_date, datetime):
         raise TypeError("Date is invalid.")
 
-    #Approximate of season start dates (year, month, day)
     year = current_date.year
     spring = datetime(year, 3, 20)
     summer = datetime(year, 6, 21)
@@ -320,21 +301,20 @@ def calculate_season_change(current_date = None):
     winter = datetime(year, 12, 21)
 
     if current_date < spring:
-            next_season = 'Spring'
-            season_date = spring
-        elif current_date < summer:
-            next_season = 'Summer'
-            season_date = summer
-        elif current_date < fall:
-            next_season = 'Fall'
-            season_date = fall
-        elif current_date < winter:
-            next_season = 'Winter'
-            season_date = winter
-        else:
-            # After winter starts, next season is Spring of next year
-            next_season = 'Spring'
-            season_date = datetime(year + 1, 3, 20)
+        next_season = 'Spring'
+        season_date = spring
+    elif current_date < summer:
+        next_season = 'Summer'
+        season_date = summer
+    elif current_date < fall:
+        next_season = 'Fall'
+        season_date = fall
+    elif current_date < winter:
+        next_season = 'Winter'
+        season_date = winter
+    else:
+        next_season = 'Spring'
+        season_date = datetime(year + 1, 3, 20)
 
     days_remaining = (season_date - current_date).days
 
@@ -344,90 +324,91 @@ def calculate_season_change(current_date = None):
         'season_start_date': season_date.strftime('%Y-%m-%d'),
         'days_remaining': days_remaining
     }
-#Mai-Tien Pham
-    def to_date(value):
-        if isinstance(value, date):
+
+
+def to_date(value):
+    """
+    Convert a value to a date. Accepts date or 'MM/DD/YYYY' string.
+    """
+    if isinstance(value, date):
         return value
-        if isinstance(value, str):
+    if isinstance(value, str):
         parts = value.split("/")
-            if len(parts) != 3:
+        if len(parts) != 3:
             raise ValueError("Use MM/DD/YYYY format.")
         month = int(parts[0])
         day = int(parts[1])
         year = int(parts[2])
-            return date(year, month, day)
-        else:
-            raise TypeError("Enter a date or a string in MM/DD/YYYY format.")
-    # Joshua Henderson
+        return date(year, month, day)
+    else:
+        raise TypeError("Enter a date or a string in MM/DD/YYYY format.")
 
-    def days_until_frost(today: Dateish, first_frost_date: Dateish) -> int:
 
-        t = _to_date(today)
-        f = _to_date(first_frost_date)
-        delta_days = (f - t).days
-        return delta_days if delta_days > 0 else 0
-    #Joshua Henderson
+_to_date = to_date
 
-    def is_safe_to_plant(plant_date, last_frost, tolerance="tender", extra_days=0):
+
+def days_until_frost(today: Dateish, first_frost_date: Dateish) -> int:
+    t = _to_date(today)
+    f = _to_date(first_frost_date)
+    delta_days = (f - t).days
+    return delta_days if delta_days > 0 else 0
+
+
+def is_safe_to_plant(plant_date, last_frost, tolerance="tender", extra_days=0):
     """ Check if it's safe to plant based on frost tolerance."""
-        p = to_date(plant_date)
-        l = to_date(last_frost)
+    p = to_date(plant_date)
+    l = to_date(last_frost)
 
-        tolerance = tolerance.lower()
+    tolerance = tolerance.lower()
 
-        if tolerance == "tender":
+    if tolerance == "tender":
         offset = 0
-        elif tolerance == "half-hardy":
+    elif tolerance == "half-hardy":
         offset = -7    
-        elif tolerance == "hardy":
+    elif tolerance == "hardy":
         offset = -14  
-        else:
-            raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
+    else:
+        raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
 
-        safe_day = l + timedelta(days=offset + extra_days)
-        if p >= safe_day:
-            return True
-        else:
-            return False
+    safe_day = l + timedelta(days=offset + extra_days)
+    return p >= safe_day
 
-    # Joshua Henderson
 
-    def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
+def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
     """Estimate total harvest yield using simple defaults."""
-        if plant_count < 0:
-            raise ValueError("Plant count must be 0 or more.")
+    if plant_count < 0:
+        raise ValueError("Plant count must be 0 or more.")
 
-        plant_type = plant_type.lower()
+    plant_type = plant_type.lower()
 
-        # Random amount of LB default  yields
-        defaults = {
-            "tomato": 8.0,
-            "pepper": 3.0,
-            "cucumber": 5.0,
-            "zucchini": 6.0,
-            "eggplant": 4.0,
-            "lettuce": 1.0,
-            "kale": 1.5,
-            "bush bean": 2.0
-        }    
+    defaults = {
+        "tomato": 8.0,
+        "pepper": 3.0,
+        "cucumber": 5.0,
+        "zucchini": 6.0,
+        "eggplant": 4.0,
+        "lettuce": 1.0,
+        "kale": 1.5,
+        "bush bean": 2.0
+    }    
 
-        if avg_per_plant is not None:
+    if avg_per_plant is not None:
         per_plant = avg_per_plant
-        elif plant_type in defaults:
+    elif plant_type in defaults:
         per_plant = defaults[plant_type]
-        else:
-            raise ValueError("Unknown plant type. Please give avg_per_plant value.")
+    else:
+        raise ValueError("Unknown plant type. Please give avg_per_plant value.")
 
-        total = per_plant * plant_count
+    total = per_plant * plant_count
 
-        return {
-            "plant": plant_type,
-            "plants": plant_count,
-            "each": per_plant,
-            "total": round(total, 2)
-        }
+    return {
+        "plant": plant_type,
+        "plants": plant_count,
+        "each": per_plant,
+        "total": round(total, 2)
+    }
 
-    #Joshua Henderson
+
 class AbstractContainer(ABC):
     """Abstract base class for garden containers."""
 
@@ -437,10 +418,11 @@ class AbstractContainer(ABC):
         if length <= 0 or depth <= 0:
             raise ValueError("Length and Depth must be positive.")
         self._id = container_id
-        self._length = length   # diameter for circle
+        self._length = length
         self._depth = depth
         self._area = self.calculate_area()
         self._volume = self.calculate_volume()
+
     @property
     def container_id(self):
         return self._id
@@ -466,7 +448,10 @@ class AbstractContainer(ABC):
         pass
 
     def __str__(self):
-        return f"{self.get_shape_name().capitalize()} Container ID:{self._id}, Area: {round(self.area,2)} sq in, Volume: {round(self.volume,2)} cu in"
+        return (
+            f"{self.get_shape_name().capitalize()} Container ID:{self._id}, "
+            f"Area: {round(self.area, 2)} sq in, Volume: {round(self.volume, 2)} cu in"
+        )
 
 
 class RectangularContainer(AbstractContainer):
@@ -491,7 +476,7 @@ class RectangularContainer(AbstractContainer):
 
 class CircularContainer(AbstractContainer):
     def __init__(self, container_id, diameter, depth):
-        validate_container_dimensions(diameter, 1, depth)  # width dummy=1
+        validate_container_dimensions(diameter, 1, depth)
         self._diameter = diameter
         self._radius = diameter / 2
         super().__init__(container_id, diameter, depth)
@@ -508,7 +493,7 @@ class CircularContainer(AbstractContainer):
     def __str__(self):
         base_str = super().__str__()
         return f"{base_str} (Diameter: {self._diameter} in, Depth: {self._depth} in)"
-        #Sara Shokouhian
+
 
 class SquareContainer(AbstractContainer):
     def __init__(self, container_id, side_length, depth):
@@ -525,8 +510,8 @@ class SquareContainer(AbstractContainer):
 
     def __str__(self):
         base_str = super().__str__()
-        return f"{base_str} (side: {self._side_length} in, Depth: {self._depth} in}
-#Caden Ennis
+        return f"{base_str} (side: {self._side_length} in, Depth: {self._depth} in)"
+
 
 class ContainerManagement:
     """Manages AbstractContainer objects via composition."""
@@ -566,7 +551,7 @@ class ContainerManagement:
 
     def __str__(self):
         return f"ContainerManagement - {len(self._containers)} containers managed."
-#Sara Shokouhian
+
 
 class Garden:
     def __init__(self, name, last_frost, first_frost):
@@ -627,25 +612,19 @@ class Garden:
     def __repr__(self):
         return f"Garden(name={self._name}, last_frost={self._last_frost}, first_frost={self._first_frost})"
 
+
 class PlantingSchedule:
     """Manages planting dates, seasons, and tracks important dates."""
     
     def __init__(self, location="Unknown"):
-        """Initialize a planting schedule.
-        
-        Args:
-            location (str): Planting location area
-        """
         self._location = location
         self._plantings = []
     
     @property
     def location(self):
-        """str: Planting location."""
         return self._location
     
     def parse_date(self, value):
-        """Parse date from string format."""
         if isinstance(value, date):
             return value
         if isinstance(value, str):
@@ -656,15 +635,7 @@ class PlantingSchedule:
             return date(year, month, day)
         raise TypeError("Date must be string (MM/DD/YYYY) or date object")
     
-    def get_season_info(self, check_date = None):
-        """Get current season information based on date.
-        
-        Args:
-            check_date (date or None): Date to check (default: today)
-            
-        Returns:
-            dict: Season information including next season and days remaining
-        """
+    def get_season_info(self, check_date=None):
         if check_date is None:
             check_date = date.today()
         elif isinstance(check_date, str):
@@ -672,14 +643,12 @@ class PlantingSchedule:
         elif not isinstance(check_date, date):
             raise TypeError("Must be date object or string")
         
-        # The season start dates for the year
         year = check_date.year
         spring = date(year, 3, 20)
         summer = date(year, 6, 21)
         fall = date(year, 9, 22)
         winter = date(year, 12, 21)
         
-        # Determine current season and next season
         if check_date < spring:
             current_season = 'Winter'
             next_season = 'Spring'
@@ -712,13 +681,6 @@ class PlantingSchedule:
         }
     
     def add_planting_record(self, plant_name, plant_date, container_id=None):
-        """Record when a new plant is added to the garden.
-        
-        Args:
-            plant_name (str): Name of plant
-            plant_date (str or date): Date planted
-            container_id (str): Optional container identifier
-        """
         planting = {
             'plant': plant_name,
             'date': self.parse_date(plant_date),
@@ -727,22 +689,9 @@ class PlantingSchedule:
         self._plantings.append(planting)
     
     def get_planting_history(self):
-        """Get all recorded plantings.
-        
-        Returns:
-            list: All planting records
-        """
         return self._plantings.copy()
     
     def get_plantings_by_season(self, season):
-        """Get all plantings for a specific season.
-        
-        Args:
-            season (str): Season name ('Spring', 'Summer', 'Fall', 'Winter')
-            
-        Returns:
-            list: Plantings in that season
-        """
         season = season.capitalize()
         valid_seasons = ['Spring', 'Summer', 'Fall', 'Winter']
         
@@ -763,25 +712,16 @@ class PlantingSchedule:
     
     def __repr__(self):
         return f"PlantingSchedule(location='{self._location}')"
-#Mai-Tien Pham
+
 
 class ContainerManagement:
-    """Designed to manage our garden containers, making sure to include size, soil, and compost calculations.
-    
-    This class includes functions such as:
-        - validate_container_dimensions()
-        - calculate_area()
-        - calculate_soil_volume()
-        - calculate_compost_volume()
-        
-        """
-
+    """Designed to manage our garden containers, making sure to include size, soil, and compost calculations."""
     def __init__(self):
-        """Initializing the container management with an empty list."""
         self._containers = []
 
     def add_container(self, container_id, length, width, depth, shape='rectangle'):
-        """Add a new container to the management system.
+        """
+        Add a new container to the management system.
         
         Parameters:
             container_id (str): Unique ID for the container
@@ -791,7 +731,7 @@ class ContainerManagement:
             shape (str): 'rectangle' or 'circle'
 
         Returns:
-            dict: Details about the container."
+            dict: Details about the container.
         """
         validate_container_dimensions(length, width if shape == 'rectangle' else 1, depth)
 
@@ -804,44 +744,31 @@ class ContainerManagement:
             'width': width,
             'depth': depth,
             'area_sq_in': round(area, 2),
-            'volume_cu_in': round(volume, 2)}
+            'volume_cu_in': round(volume, 2)
+        }
         self._containers.append(container)
         return container
     
     def get_container(self, container_id):
-        """Retrieve a container by its ID.
-        
-        Parameters: 
-            container_id: The ID of the container to retrieve"""
         for container in self._containers:
             if container['id'] == container_id:
                 return container
         raise ValueError(f"Container with ID {container_id} not found.")
     
-    def calculate_compost(self, container_id, ratio = 0.25):
-        """Calculates the comport and soil needed for a container.
-        
-        Parameters:
-            container_id: The ID of the container
-            ratio: Compost ratio defaulted at 0.25
-            
-        Returns:
-            dict: compost and soil ratio values"""
-        container = self.get_cotainer(container_id)
+    def calculate_compost(self, container_id, ratio=0.25):
+        container = self.get_container(container_id)
         compost_info = calculate_compost_needed(container['volume_cu_in'], ratio)
         return compost_info
     
     def list_containers(self):
-        """Returns all of the containers being managed."""
         return self._containers.copy()
     
     def __len__(self):
-        """Returns the number of containers being managed."""
         return len(self._containers)
     
     def __str__(self):
         return f"ContainerManagement - {len(self._containers)} containers managed."
-# Caden Ennis
+
 
 class Plant:
     """Represents a plant with species, planting date, and soil requirements."""
@@ -872,49 +799,36 @@ class Plant:
 
     @property
     def species(self):
-        """str: The species name (read-only)."""
         return self._species
 
     @property
     def planting_date(self):
-        """str: The date when the plant was planted."""
         return self._planting_date
 
     @property
     def required_ph(self):
-        """float: The ideal pH level for this plant."""
         return self._required_ph
 
     def mark_ready_for_harvest(self):
-        """Mark the plant as ready for harvest."""
         self._harvest_ready = True
 
     def is_ready(self):
-        """Return True if the plant is ready for harvest."""
         return self._harvest_ready
 
     def days_since_planted(self):
-        """Return how many days have passed since the plant was planted."""
         date_planted = datetime.strptime(self._planting_date, "%Y-%m-%d")
         return (datetime.now() - date_planted).days
 
-    # -----------------------
-    # Integrated Project 1 functions
-    # -----------------------
     def parse_plant_species(self, name):
-        """Extracts first word of the scientific plant name."""
         return name.split()[0]
 
     def format_planting_date(self, date_obj):
-        """Formats the date in YYYY-MM-DD format."""
         return date_obj.strftime("%Y-%m-%d")
 
     def is_valid_ph(self, ph_value):
-        """Check if the pH level is valid (between 0 and 14)."""
         return isinstance(ph_value, (int, float)) and 0 <= ph_value <= 14
 
     def is_valid_date(self, date_str):
-        """Validate date format."""
         try:
             datetime.strptime(date_str, "%Y-%m-%d")
             return True
@@ -927,7 +841,7 @@ class Plant:
 
     def __repr__(self):
         return f"Plant(species='{self._species}', date='{self._planting_date}', pH={self._required_ph})"
-#Sara Shokouhian
+
 
 class Soil:
     """Represents soil with its type and pH level."""
@@ -953,29 +867,22 @@ class Soil:
 
     @property
     def soil_type(self):
-        """str: Type of soil."""
         return self._soil_type
 
     @property
     def ph_level(self):
-        """float: pH level of the soil."""
         return self._ph_level
 
     def adjust_ph(self, new_ph):
-        """Adjust soil pH level if needed."""
         if not self.is_valid_ph(new_ph):
             raise ValueError("Invalid pH level.")
         self._ph_level = new_ph
         return f"Soil pH adjusted to {new_ph}"
 
     def check_compatibility(self, plant):
-        """Check if soil pH is compatible with a given plant."""
-        if abs(self._ph_level - plant.required_ph) <= 1:
-            return True
-        return False
+        return abs(self._ph_level - plant.required_ph) <= 1
 
     def is_valid_ph(self, ph_value):
-        """Validate that pH number is between 0 and 14."""
         return isinstance(ph_value, (int, float)) and 0 <= ph_value <= 14
 
     def __str__(self):
@@ -983,4 +890,72 @@ class Soil:
 
     def __repr__(self):
         return f"Soil(type='{self._soil_type}', pH={self._ph_level})"
-#Sara Shokouhian
+
+if __name__ == "__main__":
+    print("Garden Demo")
+
+    print("\nAdd a container:")
+    cm = ContainerManagement()
+    c_id = input("Enter container ID: ")
+    c_shape = input("Shape (rectangle/circle): ").lower()
+
+    if c_shape == "rectangle":
+        length = float(input("Length (inches): "))
+        width = float(input("Width (inches): "))
+        depth = float(input("Depth (inches): "))
+        container = cm.add_container(c_id, length, width, depth, shape="rectangle")
+    else:
+        diameter = float(input("Diameter (inches): "))
+        depth = float(input("Depth (inches): "))
+        container = cm.add_container(c_id, diameter, None, depth, shape="circle")
+
+    print("\nContainer added:")
+    print(container)
+
+    print("\nCompost calculation:")
+    ratio = float(input("Enter compost ratio (0–1, default .25): ") or 0.25)
+    print(cm.calculate_compost(c_id, ratio))
+
+    print("\n=== Garden Creation ===")
+    g_name = input("Garden name: ")
+    last_frost = input("Last frost date (MM/DD/YYYY): ")
+    first_frost = input("First frost date (MM/DD/YYYY): ")
+
+    garden = Garden(g_name, last_frost, first_frost)
+    print(f"\nGarden '{g_name}' created.")
+
+    while True:
+        add = input("\nAdd a plant? (y/n): ").lower()
+        if add != "y":
+            break
+
+        p_type = input("Plant type: ")
+        p_count = int(input("How many plants? "))
+        p_tol = input("Tolerance (tender, half-hardy, hardy): ")
+        avg = input("Average yield per plant (enter to skip): ")
+        avg = float(avg) if avg else None
+
+        garden.add_plant(p_type, p_count, p_tol, avg)
+        print("Plant added.")
+
+    print("\nChecking planting safety:")
+    check_date = input("Enter planting date to check (MM/DD/YYYY): ")
+    print(garden.is_safe_on(check_date))
+
+    print("\nEstimated harvest yield:")
+    print(garden.total_yield())
+
+    print("\n=== Soil Compatibility Test ===")
+    species = input("Plant species scientific/common name: ")
+    pdate = input("Planting date (YYYY-MM-DD): ")
+    ph = float(input("Required soil pH: "))
+    plant = Plant(species, pdate, ph)
+
+    soil_type = input("Soil type: ")
+    soil_ph = float(input("Soil pH: "))
+    soil = Soil(soil_type, soil_ph)
+
+    print("\nPlant:", plant)
+    print("Soil:", soil)
+    print("Compatible?", soil.check_compatibility(plant))
+
