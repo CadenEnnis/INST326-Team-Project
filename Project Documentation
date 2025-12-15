@@ -1,0 +1,1393 @@
+# Code Style
+ 
+## Overview
+Our Garden Management System follows Python best practices to ensure clean, maintainable code that Professor Dempwolf can use to organize and manage his garden effectively.
+ 
+## Style Standards
+ 
+### Naming Conventions
+- **Classes**: PascalCase (e.g., `ContainerManagement`, `Garden`, `Plant`, `Soil`, `PlantingSchedule`)
+- **Functions**: snake_case (e.g., `calculate_area`, `validate_container_dimensions`, `is_safe_to_plant`)
+- **Variables**: snake_case (e.g., `plant_count`, `soil_volume`, `container_id`)
+- **Constants**: UPPER_CASE (used in calculation functions like conversion ratios)
+- **Private attributes**: Prefixed with underscore (e.g., `_containers`, `_plants`, `_name`)
+ 
+### Code Organization
+Our project follows a clear hierarchical structure:
+ 
+1. **Imports and Type Definitions** (top of file)
+2. **Calculation Functions** (standalone utility functions)
+3. **Abstract Base Classes** (AbstractContainer with ABC)
+4. **Concrete Classes** (RectangularContainer, CircularContainer, SquareContainer)
+5. **Management Classes** (ContainerManagement, Garden, PlantingSchedule)
+6. **Data Classes** (Plant, Soil)
+7. **Interactive Interface** (main execution block using `if __name__ == "__main__":`)
+ 
+### Documentation Standards
+All functions include comprehensive docstrings with:
+- **Purpose**: Clear description of what the function does
+- **Parameters**: Type hints and descriptions for each parameter
+- **Returns**: Description of return value and type
+- **Raises**: All possible exceptions documented
+ 
+Example from our code:
+```python
+def calculate_area(length, width=None, shape='rectangle'):
+   """
+   Calculate the area of our containers.
+ 
+   Parameters:
+       length (float): Length in inches
+       width (float): Width in inches
+       shape (str): 'rectangle' or 'circle'
+ 
+   Returns:
+       float: area in square inches
+ 
+   Raises:
+       ValueError: if shape is unknown
+   """
+```
+ 
+### Object-Oriented Design Patterns
+ 
+#### Abstract Base Classes (ABC)
+We use Python's ABC module for polymorphism:
+```python
+class AbstractContainer(ABC):
+   @abstractmethod
+   def get_shape_name(self):
+       pass
+```
+ 
+This ensures all container types implement required methods.
+ 
+#### Composition
+The `ContainerManagement` class uses composition to manage multiple container objects:
+```python
+class ContainerManagement:
+   def __init__(self):
+       self._containers = []  # Composition: contains AbstractContainer objects
+```
+ 
+#### Property Decorators
+We use `@property` decorators for controlled attribute access:
+```python
+@property
+def container_id(self):
+   return self._id
+```
+ 
+### Error Handling Strategy
+ 
+#### Input Validation at Function Entry
+All functions validate inputs immediately:
+```python
+def validate_container_dimensions(length, width, depth):
+   if length <= 0:
+       raise ValueError("Length must be positive.")
+   if width <= 0:
+       raise ValueError("Width must be positive.")
+   # ... more validation
+```
+ 
+#### Descriptive Error Messages
+Error messages clearly explain the problem:
+- Bad: `raise ValueError("Invalid")`
+- Good: `raise ValueError("Length is larger than maximum limit (240 inches).")`
+ 
+#### Appropriate Exception Types
+- `ValueError`: Wrong value but correct type
+- `TypeError`: Wrong data type
+- Built-in exceptions used correctly throughout
+ 
+### Code Quality Principles
+ 
+#### DRY (Don't Repeat Yourself)
+We created reusable calculation functions that multiple classes can use:
+```python
+# Function used by both standalone operations and classes
+def calculate_compost_needed(soil_volume, target_ratio=0.25):
+   # ... implementation
+   
+# Used by ContainerManagement class
+def calculate_compost(self, container_id, ratio=0.25):
+   container = self.get_container(container_id)
+   return calculate_compost_needed(container.volume, ratio)
+```
+ 
+#### Clear Variable Names
+- `plant_count` instead of `pc`
+- `soil_volume` instead of `sv`
+- `container_id` instead of `cid`
+ 
+#### Single Responsibility Principle
+Each function has one clear purpose:
+- `calculate_area()` only calculates area
+- `validate_container_dimensions()` only validates dimensions
+- Classes have focused responsibilities (Garden manages plants, ContainerManagement manages containers)
+ 
+#### Consistent Formatting
+- 4-space indentation (PEP 8 standard)
+- Blank lines separate logical sections
+- Maximum line length kept reasonable
+- Proper spacing around operators
+ 
+### Type Hints
+We use type hints for clarity:
+```python
+from typing import Union
+Dateish = Union[str, date]
+ 
+def days_until_frost(today: Dateish, first_frost_date: Dateish) -> int:
+```
+ 
+### Default Parameters
+Functions use sensible defaults:
+```python
+def calculate_compost_needed(soil_volume, target_ratio=0.25):
+   # Default 25% compost ratio
+   
+def is_safe_to_plant(plant_date, last_frost, tolerance="tender", extra_days=0):
+   # Default to tender plants for safety
+```
+ 
+## Maintainability Features
+ 
+### Modular Design
+- Calculation functions can be used independently
+- Classes can be imported and used separately
+- Clear separation between data and behavior
+ 
+### Extensibility
+Easy to add new features:
+- New container shapes just need to extend AbstractContainer
+- New plant types can use existing infrastructure
+- Additional calculations can follow established patterns
+ 
+### Testing-Friendly
+- Pure calculation functions easy to unit test
+- Classes designed for integration testing
+- Clear interfaces between components
+ 
+## Team Contributions to Code Quality
+ 
+**Team Members:**
+- Sara Shokouhian
+- Caden Ennis
+- Mai-Tien Pham
+- Joshua Henderson
+ 
+Each team member wrote functions following these standards, ensuring consistency across the codebase. Code reviews were conducted to maintain quality throughout development.
+ 
+---
+ 
+**Last Updated:** December 14, 2025  
+**Maintained By:** Garden Management Team
+ 
+____________________________________________________________________________
+ 
+# Setup and Usage Guide
+## Garden Management System
+ 
+**Team:** Christopher's Garden  
+**Domain:** Garden Management  
+**Course:** INST326 - Object-Oriented Programming for Information Science
+ 
+## Installation
+ 
+### Requirements
+- Python 3.7 or higher
+- No external dependencies required (uses Python standard library only)
+ 
+### Setup Steps
+ 
+1. **Clone or download the repository:**
+  ```bash
+  git clone https://github.com/CadenEnnis/INST326-Team-Project
+  cd INST326-Team-Project
+  ```
+ 
+2. **Verify Python installation:**
+  ```bash
+  python --version
+  ```
+  or
+  ```bash
+  python3 --version
+  ```
+ 
+3. **Verify the main file is present:**
+  ```bash
+  ls project.py
+  ```
+ 
+## Running the Program
+ 
+### Interactive Command-Line Interface
+ 
+Run the program to access the interactive demo:
+ 
+```bash
+python project.py
+```
+ 
+The program will guide you through several workflows:
+ 
+#### 1. Container Management
+- Create containers (rectangle or circle shapes)
+- Calculate container area and soil volume
+- Determine compost needs
+ 
+#### 2. Garden Creation
+- Set up a garden with frost dates
+- Add multiple plant types with different frost tolerances
+- Check planting safety for specific dates
+- Estimate total harvest yield
+ 
+#### 3. Soil Compatibility Testing
+- Create plant and soil objects
+- Check pH compatibility between soil and plants
+ 
+### Example Interactive Session
+ 
+```
+Garden Demo
+ 
+Add a container:
+Enter container ID: raised-bed-1
+Shape (rectangle/circle): rectangle
+Length (inches): 48
+Width (inches): 24
+Depth (inches): 12
+ 
+Container added:
+{'id': 'raised-bed-1', 'shape': 'rectangle', 'length': 48.0, 'width': 24.0,
+'depth': 12.0, 'area_sq_in': 1152.0, 'volume_cu_in': 13824.0}
+ 
+Compost calculation:
+Enter compost ratio (0–1, default .25): 0.3
+{'compost_ratio_needed': 4147.2, 'soil_ratio_needed': 9676.8}
+```
+ 
+## Using as a Python Module
+ 
+You can import and use the classes and functions in your own Python scripts:
+ 
+### Example 1: Container Management
+```python
+from project import ContainerManagement
+ 
+# Create container manager
+cm = ContainerManagement()
+ 
+# Add a rectangular container
+container = cm.add_container('bed-1', 48, 24, 12, shape='rectangle')
+print(f"Container volume: {container.volume} cubic inches")
+ 
+# Calculate compost needs
+compost = cm.calculate_compost('bed-1', ratio=0.30)
+print(f"Compost needed: {compost['compost_ratio_needed']} cu in")
+```
+ 
+### Example 2: Garden Planning
+```python
+from project import Garden
+ 
+# Create a garden with frost dates
+garden = Garden("Spring Garden", "4/15/2024", "10/20/2024")
+ 
+# Add plants with different frost tolerances
+garden.add_plant("tomato", 6, "tender", 8.0)
+garden.add_plant("lettuce", 10, "hardy", 1.0)
+garden.add_plant("kale", 5, "hardy", 1.5)
+ 
+# Check if it's safe to plant on May 1st
+safety_check = garden.is_safe_on("5/1/2024")
+print(safety_check)
+# Output: [('tomato', True), ('lettuce', True), ('kale', True)]
+ 
+# Get expected total yield
+yield_data = garden.total_yield()
+print(f"Expected harvest: {yield_data['total_lb']} pounds")
+# Output: Expected harvest: 65.5 pounds
+```
+ 
+### Example 3: Individual Calculations
+```python
+from project import (
+   calculate_area,
+   calculate_soil_volume,
+   calculate_compost_needed,
+   calculate_plant_space
+)
+ 
+# Calculate container area
+area = calculate_area(36, 18, shape='rectangle')
+print(f"Area: {area} square inches")
+ 
+# Calculate soil volume needed
+volume = calculate_soil_volume(36, 18, 12, shape='rectangle')
+print(f"Soil volume: {volume} cubic inches")
+ 
+# Calculate compost mix
+compost = calculate_compost_needed(volume, target_ratio=0.25)
+print(f"Compost: {compost['compost_ratio_needed']} cu in")
+print(f"Soil: {compost['soil_ratio_needed']} cu in")
+ 
+# Calculate plant spacing
+spacing = calculate_plant_space(36, 18, count=4, shape='rectangle')
+print(f"Space between plants: {spacing} inches")
+```
+ 
+### Example 4: Plant and Soil Compatibility
+```python
+from project import Plant, Soil
+ 
+# Create a tomato plant
+tomato = Plant("Solanum lycopersicum", "2024-05-01", 6.5)
+ 
+# Create soil
+garden_soil = Soil("loamy", 6.8)
+ 
+# Check compatibility (pH within 1.0)
+if garden_soil.check_compatibility(tomato):
+   print(f"{tomato.species} is compatible with {garden_soil.soil_type} soil")
+else:
+   print("Soil pH needs adjustment")
+```
+ 
+### Example 5: Planting Schedule
+```python
+from project import PlantingSchedule
+ 
+# Create planting schedule
+schedule = PlantingSchedule(location="College Park, MD")
+ 
+# Add planting records
+schedule.add_planting_record("Tomato", "5/15/2024", "raised-bed-1")
+schedule.add_planting_record("Lettuce", "3/20/2024", "raised-bed-2")
+ 
+# Get season information
+season_info = schedule.get_season_info("4/1/2024")
+print(f"Current season: {season_info['current_season']}")
+print(f"Days until {season_info['next_season']}: {season_info['days_until_next_season']}")
+ 
+# Get all spring plantings
+spring_plants = schedule.get_plantings_by_season("Spring")
+```
+ 
+## Running Tests
+ 
+To run the test suite (once tests are implemented):
+ 
+```bash
+python -m unittest discover
+```
+ 
+For verbose output showing each test:
+```bash
+python -m unittest discover -v
+```
+ 
+To run a specific test file:
+```bash
+python -m unittest test_garden.py
+```
+ 
+## Function Reference
+ 
+### Calculation Functions (15 total)
+ 
+1. **calculate_area** - Calculate container area (rectangle or circle)
+2. **validate_container_dimensions** - Validate container size limits
+3. **measurement_conversion** - Convert between inches, feet, centimeters
+4. **calculate_soil_volume** - Calculate soil volume needed
+5. **validate_boolean_input** - Validate boolean inputs
+6. **format_planting_date** - Format dates to YYYY-MM-DD
+7. **parse_plant_species** - Extract genus from scientific name
+8. **is_valid_ph_level** - Validate pH is between 0-14
+9. **calculate_plant_space** - Calculate spacing between plants
+10. **calculate_compost_needed** - Calculate compost/soil ratio
+11. **calculate_season_change** - Calculate days until season change
+12. **to_date** - Convert string to date object
+13. **days_until_frost** - Calculate days until frost date
+14. **is_safe_to_plant** - Check if safe to plant based on frost
+15. **estimate_harvest_yield** - Estimate total harvest pounds
+ 
+### Classes
+ 
+- **AbstractContainer** (ABC) - Base class for all containers
+- **RectangularContainer** - Rectangular garden beds
+- **CircularContainer** - Circular planters
+- **SquareContainer** - Square containers
+- **ContainerManagement** - Manages multiple containers
+- **Garden** - Manages plants and frost dates
+- **PlantingSchedule** - Tracks planting dates and seasons
+- **Plant** - Represents individual plants with soil requirements
+- **Soil** - Represents soil type and pH level
+ 
+## Troubleshooting
+ 
+### Common Issues
+ 
+#### Error: "Container dimensions invalid"
+**Cause:** Dimensions outside acceptable range  
+**Solution:**
+- Length and width must be positive and ≤ 240 inches
+- Depth must be between 2 and 48 inches
+ 
+#### Error: "Date format invalid"
+**Cause:** Incorrect date format  
+**Solution:** Use MM/DD/YYYY format
+- Correct: "4/15/2025"
+- Incorrect: "4-15-2025" or "2025-04-15"
+ 
+#### Error: "pH must be between 0 and 14"
+**Cause:** Invalid pH value  
+**Solution:** Enter a number between 0.0 and 14.0
+ 
+#### Tests not running
+**Cause:** Not in correct directory  
+**Solution:**
+```bash
+cd INST326-Team-Project
+python -m unittest discover
+```
+ 
+## Support
+ 
+For questions or issues:
+- Check the project repository: https://github.com/CadenEnnis/INST326-Team-Project
+- Contact team members through course channels
+- Review the code documentation and comments
+ 
+---
+ 
+**Team Members:**
+- Sara Shokouhian
+- Caden Ennis
+- Mai-Tien Pham
+- Joshua Henderson
+ 
+**Course:** INST326 - Object-Oriented Programming for Information Science  
+**Instructor:** Professor Dempwolf
+ 
+____________________________________________________________________________
+# Architecture Documentation
+## Garden Management System
+ 
+**Project:** Helping Professor Dempwolf organize and manage his garden  
+**Team:** Christopher's Garden  
+**Course:** INST326 - Object-Oriented Programming for Information Science
+ 
+## System Overview
+ 
+The Garden Management System is designed to help users plan and manage container gardens with accurate calculations, frost safety planning, and harvest predictions. The system provides both standalone utility functions and object-oriented classes for comprehensive garden management.
+ 
+## Design Philosophy
+ 
+### Core Principles
+1. **Modularity**: Clear separation of concerns with focused components
+2. **Reusability**: Functions usable independently or through classes
+3. **Extensibility**: Easy to add new container types, plant varieties, or calculations
+4. **Reliability**: Comprehensive input validation and error handling
+5. **Simplicity**: Intuitive interfaces for users like Professor Dempwolf
+ 
+### Hybrid Approach: Functions + Classes
+ 
+We deliberately chose a hybrid architecture:
+- **Standalone functions** for pure calculations (no state needed)
+- **Classes** for entities that manage data over time
+ 
+This gives users flexibility to use simple calculations directly or leverage full object-oriented features.
+ 
+## Architectural Layers
+ 
+### Layer 1: Calculation Foundation (Standalone Functions)
+ 
+**Purpose:** Pure calculation functions with no side effects
+ 
+**Functions (15 total):**
+ 
+#### Geometric Calculations
+- `calculate_area()` - Area of rectangular or circular containers
+- `calculate_soil_volume()` - Volume calculations for soil needs
+- `calculate_plant_space()` - Spacing between plants in containers
+ 
+#### Validation Functions
+- `validate_container_dimensions()` - Ensure dimensions within safe limits (≤240", 2-48" depth)
+- `validate_boolean_input()` - Type checking for boolean values
+- `is_valid_ph_level()` - Validate pH is in 0-14 range
+ 
+#### Date and Time Functions
+- `format_planting_date()` - Standardize dates to YYYY-MM-DD
+- `to_date()` - Convert strings to date objects (MM/DD/YYYY format)
+- `days_until_frost()` - Calculate days until frost dates
+- `calculate_season_change()` - Calculate days until next season
+- `is_safe_to_plant()` - Determine planting safety based on frost tolerance
+ 
+#### Agricultural Calculations
+- `calculate_compost_needed()` - Calculate compost/soil ratios
+- `estimate_harvest_yield()` - Predict harvest yield in pounds
+- `parse_plant_species()` - Extract genus from scientific names
+ 
+#### Utility Functions
+- `measurement_conversion()` - Convert between inches, feet, centimeters
+ 
+**Design Rationale:**
+These are pure functions because:
+- They perform calculations without maintaining state
+- They're easily testable in isolation
+- They can be used independently by advanced users
+- They serve as building blocks for classes
+ 
+### Layer 2: Abstract Base Classes (Object-Oriented Foundation)
+ 
+#### AbstractContainer (ABC)
+ 
+**Purpose:** Define common interface for all container types
+ 
+**Key Design:**
+```python
+class AbstractContainer(ABC):
+   def __init__(self, container_id, length, depth):
+       self._id = container_id
+       self._length = length
+       self._depth = depth
+       self._area = self.calculate_area()     # Calculated on initialization
+       self._volume = self.calculate_volume() # Calculated on initialization
+   
+   @abstractmethod
+   def get_shape_name(self):
+       pass
+   
+   @abstractmethod
+   def calculate_area(self):
+       pass
+   
+   @abstractmethod
+   def calculate_volume(self):
+       pass
+```
+ 
+**Benefits:**
+- Enforces consistent interface across container types
+- Enables polymorphism (treat all containers uniformly)
+- Prevents instantiation of incomplete container types
+- Caches calculations for performance
+ 
+### Layer 3: Concrete Container Classes
+ 
+#### RectangularContainer
+- Most common garden bed type
+- Requires length, width, depth
+- Uses rectangular area calculation
+ 
+#### CircularContainer
+- For round planters and pots
+- Uses diameter and depth
+- Calculates area using π × r²
+ 
+#### SquareContainer
+- Special case of rectangle
+- Single side_length parameter
+- Simplified interface for square beds
+ 
+**Polymorphic Design:**
+All container types can be stored in the same collection and treated uniformly through the AbstractContainer interface.
+ 
+### Layer 4: Management Classes (Composition)
+ 
+#### ContainerManagement Class
+ 
+**Purpose:** Manage multiple containers using composition
+ 
+**Key Responsibilities:**
+- Store collection of AbstractContainer objects
+- Add/retrieve containers by ID
+- Calculate compost needs for specific containers
+- Provide summary information
+ 
+**Design Pattern - Composition:**
+```python
+class ContainerManagement:
+   def __init__(self):
+       self._containers = []  # HAS-A relationship with containers
+   
+   def add_container(self, container_id, length, width, depth, shape):
+       # Creates appropriate container type
+       # Adds to internal collection
+```
+ 
+**Rationale:**
+- ContainerManagement HAS-A list of containers (composition)
+- Provides unified interface to manage diverse container types
+- Delegates calculations to standalone functions
+- Maintains container inventory
+ 
+#### Garden Class
+ 
+**Purpose:** Manage plants and frost planning for a garden
+ 
+**Key Responsibilities:**
+- Track garden name and frost dates (first frost, last frost)
+- Manage list of plants with frost tolerances
+- Determine planting safety for given dates
+- Calculate total expected harvest yield
+ 
+**Design Features:**
+- Uses `to_date()` to parse frost dates
+- Delegates to `is_safe_to_plant()` for safety checks
+- Delegates to `estimate_harvest_yield()` for yield calculations
+- Stores plants as dictionaries (simple data structure)
+ 
+**Methods:**
+- `add_plant()` - Add plant with tolerance (tender/half-hardy/hardy)
+- `is_safe_on()` - Check all plants for safety on a date
+- `total_yield()` - Calculate total expected harvest
+- `days_until_first_frost()` - Planning helper
+ 
+#### PlantingSchedule Class
+ 
+**Purpose:** Track planting history and seasonal planning
+ 
+**Key Responsibilities:**
+- Record when plants were planted
+- Determine current season based on dates
+- Filter plantings by season
+- Provide seasonal insights
+ 
+**Design Features:**
+- Location-aware (tracks where schedule applies)
+- Date parsing with validation
+- Season calculation based on standard dates:
+ - Spring: March 20
+ - Summer: June 21
+ - Fall: September 22
+ - Winter: December 21
+ 
+### Layer 5: Data Model Classes
+ 
+#### Plant Class
+ 
+**Purpose:** Represent individual plants with requirements
+ 
+**Key Features:**
+- Species name (parsed to genus)
+- Planting date (YYYY-MM-DD format)
+- Required pH level
+- Harvest readiness tracking
+ 
+**Methods:**
+- `days_since_planted()` - Calculate growth time
+- `mark_ready_for_harvest()` - Update status
+- Validation in constructor ensures data integrity
+ 
+#### Soil Class
+ 
+**Purpose:** Represent soil characteristics
+ 
+**Key Features:**
+- Soil type (loamy, clay, sandy, etc.)
+- pH level (0-14 range)
+- pH adjustment capability
+ 
+**Integration:**
+- `check_compatibility(plant)` - Verify plant/soil pH match (within 1.0)
+- Enables planning for soil amendments
+ 
+### Layer 6: User Interface
+ 
+**Interactive CLI (`if __name__ == "__main__":`):**
+ 
+Provides step-by-step workflow:
+1. Container creation with compost calculation
+2. Garden setup with frost dates
+3. Plant addition with tolerances
+4. Safety checks and yield estimates
+5. Soil compatibility testing
+ 
+**Design Decision:**
+- Kept simple for educational purposes
+- Demonstrates all major features
+- Easy to understand for users like Professor Dempwolf
+- Designed to support future GUI/web interface without major refactoring
+ 
+## Data Flow Examples
+ 
+### Example 1: Creating a Container with Compost Calculation
+ 
+```
+User Input
+   ↓
+ContainerManagement.add_container()
+   ↓
+validate_container_dimensions() ← [validates dimensions]
+   ↓
+RectangularContainer.__init__()
+   ↓
+calculate_area() ← [computes area]
+   ↓
+calculate_volume() ← [computes volume]
+   ↓
+Store container in _containers list
+   ↓
+Return container details to user
+```
+ 
+### Example 2: Checking Planting Safety
+ 
+```
+User provides date
+   ↓
+Garden.is_safe_on(date)
+   ↓
+For each plant in garden:
+   ↓
+   is_safe_to_plant(date, last_frost, tolerance)
+       ↓
+       to_date() ← [convert strings to dates]
+       ↓
+       Calculate safe planting date based on tolerance:
+       - tender: last_frost + 0 days
+       - half-hardy: last_frost - 7 days
+       - hardy: last_frost - 14 days
+       ↓
+       Compare plant_date >= safe_date
+   ↓
+Collect results for all plants
+   ↓
+Return list of (plant_type, safe) tuples
+```
+ 
+## Key Design Decisions
+ 
+### Decision 1: Why Both Functions and Classes?
+ 
+**Rationale:**
+- **Functions** for calculations that don't need state (mathematical operations)
+- **Classes** for entities that persist and change over time (gardens, containers, plants)
+ 
+**Benefits:**
+- Flexibility for different use cases
+- Testing is straightforward
+- Users can choose complexity level
+ 
+### Decision 2: Why Abstract Base Classes?
+ 
+**Rationale:**
+- Enforce consistent interface across container types
+- Enable polymorphism
+- Prevent bugs from incomplete implementations
+- Professional OOP practice
+ 
+**Example:**
+```python
+# Can treat all containers uniformly
+for container in container_management.list_containers():
+   print(f"Shape: {container.get_shape_name()}")  # Works for any container type
+   print(f"Volume: {container.volume}")
+```
+ 
+### Decision 3: Why Composition Over Inheritance for Management?
+ 
+**Rationale:**
+- ContainerManagement HAS-A collection of containers (composition)
+- More flexible than inheritance
+- Follows "favor composition over inheritance" principle
+- Easier to extend and modify
+ 
+### Decision 4: Why Dictionaries for Plant Data in Garden?
+ 
+**Rationale:**
+- Simple data structure for straightforward needs
+- Easy serialization for future save/load features
+- No need for full Plant objects in this context
+- Keeps Garden class focused and simple
+ 
+### Decision 5: Date Format Standardization
+ 
+**Rationale:**
+- MM/DD/YYYY for user input (familiar to US users)
+- YYYY-MM-DD for internal storage (ISO standard, sortable)
+- Consistent parsing through dedicated functions
+ 
+## Error Handling Architecture
+ 
+### Strategy: Fail Fast with Clear Messages
+ 
+**Validation at Entry Points:**
+- All user inputs validated immediately
+- Functions check parameters before processing
+- Classes validate in constructors
+ 
+**Exception Hierarchy:**
+- `ValueError` - Wrong value but correct type (e.g., negative dimensions)
+- `TypeError` - Wrong data type (e.g., string instead of number)
+ 
+**Descriptive Messages:**
+Every error explains the problem and acceptable values:
+```python
+raise ValueError("Length is larger than maximum limit (240 inches).")
+```
+ 
+## Known Limitations
+ 
+### Current Limitations
+1. **No Data Persistence**: Data lost between program runs
+  - *Addressed in Project 4 with JSON save/load*
+2. **CLI Only**: No graphical interface
+  - *Future enhancement: Web-based UI*
+3. **Limited Date Handling**: Simplified season calculations
+  - *Future: More precise astronomical calculations*
+4. **No Multi-User Support**: Single garden at a time
+  - *Future: Database with multiple users*
+ 
+### Intentional Constraints
+1. **No External Dependencies**: Uses only Python standard library
+  - Rationale: Easier setup, no version conflicts
+2. **Simplified Yield Estimates**: Uses averages per plant type
+  - Rationale: Appropriate for planning purposes
+ 
+## Testing Strategy
+ 
+### Unit Testing
+- Each function tested independently
+- Validation functions tested with edge cases
+- Classes tested in isolation
+ 
+### Integration Testing
+- ContainerManagement with calculation functions
+- Garden with plant management and yield calculations
+- Plant/Soil compatibility checks
+ 
+### System Testing
+- Complete workflows from input to output
+- Save/load functionality (Project 4)
+- Error handling across system
+ 
+## Future Enhancements
+ 
+### Planned Improvements
+1. **Data Persistence**
+  - JSON save/load for gardens and containers
+  - CSV import for plant databases
+  - Export harvest reports
+ 
+2. **Enhanced Features**
+  - Weather API integration for frost predictions
+  - Photo tracking for plant growth
+  - Watering schedules
+  - Pest and disease tracking
+ 
+3. **User Interface**
+  - Web-based dashboard
+  - Mobile app
+  - Visualization of garden layouts
+ 
+4. **Advanced Calculations**
+  - Sun exposure tracking
+  - Companion planting recommendations
+  - Crop rotation planning
+ 
+## Extensibility Guide
+ 
+### Adding New Container Types
+1. Extend `AbstractContainer`
+2. Implement required abstract methods
+3. Add case to `ContainerManagement.add_container()`
+ 
+### Adding New Plant Attributes
+1. Extend Plant class with new properties
+2. Update Garden.add_plant() if needed
+3. Add validation as appropriate
+ 
+### Adding New Calculations
+1. Create standalone function following naming conventions
+2. Add comprehensive docstring
+3. Include input validation
+4. Add unit tests
+ 
+---
+ 
+## Team Contributions
+ 
+**Architecture Design:** Collaborative team effort
+ 
+**Implementation:**
+- **Caden Ennis**: Calculation functions, ABC implementation, SquareContainer
+- **Sara Shokouhian**: Validation functions, Plant & Soil classes, ABC structure
+- **Joshua Henderson**: Date functions, frost safety, yield estimates
+- **Mai-Tien Pham**: Spacing, compost, season calculations
+ 
+**Code Review:** Cross-team review ensuring consistency
+ 
+---
+ 
+**Last Updated:** December 14, 2025  
+**Documentation By:** Garden Management Team
+ 
+____________________________________________________________________________
+# Error Handling Documentation
+## Garden Management System
+ 
+## Overview
+ 
+Our Garden Management System uses defensive programming with comprehensive error handling to ensure reliability and provide helpful feedback to users like Professor Dempwolf. Every function validates inputs and provides clear, actionable error messages.
+ 
+## Error Handling Philosophy
+ 
+### Fail Fast Principle
+We validate inputs immediately at function entry points rather than allowing invalid data to propagate through the system. This makes debugging easier and prevents cascading failures.
+ 
+### User-Friendly Messages
+All error messages are written for end users, not just developers:
+- Poor: `raise ValueError("Invalid")`
+- Good: `raise ValueError("Length is larger than maximum limit (240 inches).")`
+ 
+### Appropriate Exception Types
+We use Python's built-in exception types correctly:
+- **ValueError**: Correct type, wrong value
+- **TypeError**: Wrong data type
+- **AttributeError**: Missing required attributes (rare, usually caught by Python)
+ 
+## Error Handling by Component
+ 
+### 1. Geometric Calculations
+ 
+#### calculate_area()
+```python
+def calculate_area(length, width=None, shape='rectangle'):
+   if shape == 'rectangle':
+       if width is None:
+           raise ValueError("Width must be provided for rectangle.")
+       return length * width
+   elif shape == 'circle':
+       radius = length / 2
+       return math.pi * radius ** 2
+   else:
+       raise ValueError("The shape is not recognized.")
+```
+ 
+**Error Handling:**
+- Validates required parameters (width for rectangles)
+- Checks for valid shape types
+- Clear messages explain what's missing
+ 
+#### validate_container_dimensions()
+```python
+def validate_container_dimensions(length, width, depth):
+   if length <= 0:
+       raise ValueError("Length must be positive.")
+   if width <= 0:
+       raise ValueError("Width must be positive.")
+   if depth <= 0:
+       raise ValueError("Depth must be positive.")
+   if length > 240:
+       raise ValueError("Length is larger than maximum limit (240 inches).")
+   if width > 240:
+       raise ValueError("Width is larger than maximum limit (240 inches).")
+   if depth < 2:
+       raise ValueError("Depth is smaller than minimum limit of 2 inches.")
+   if depth > 48:
+       raise ValueError("Depth is larger than maximum limit of 48 inches.")
+   return True
+```
+ 
+**Validation Strategy:**
+1. Check for impossible values (negative, zero)
+2. Check upper bounds (maximum container size)
+3. Check lower bounds (minimum practical depth)
+4. Each check has specific, informative message
+ 
+**Rationale for Limits:**
+- Max 240" (20 feet) - realistic garden bed limit
+- Min depth 2" - practical minimum for plant roots
+- Max depth 48" - most plants don't need deeper
+ 
+### 2. Type Validation
+ 
+#### validate_boolean_input()
+```python
+def validate_boolean_input(value: bool) -> bool:
+   if not isinstance(value, bool):
+       raise TypeError("Input must be a standard boolean (True or False).")
+   return True
+```
+ 
+**Purpose:**
+- Ensures type safety for boolean flags
+- Prevents truthy/falsy confusion (0, "", None, etc.)
+- Uses TypeError (not ValueError) because type is wrong
+ 
+#### is_valid_ph_level()
+```python
+def is_valid_ph_level(ph_value: float) -> bool:
+   if not isinstance(ph_value, (int, float)):
+       raise TypeError("pH value must be a number.")
+   return 0.0 <= ph_value <= 14.0
+```
+ 
+**Dual Validation:**
+1. Type check (must be numeric)
+2. Range check (0-14 pH scale)
+ 
+**Returns boolean** rather than raising ValueError for out-of-range because:
+- Allows caller to decide how to handle invalid pH
+- More flexible for different use cases
+ 
+### 3. Date Handling
+ 
+#### format_planting_date()
+```python
+def format_planting_date(date_str: str) -> str:
+   if not isinstance(date_str, str):
+       raise TypeError("Date must be provided as a string.")
+   
+   try:
+       date_obj = datetime.strptime(date_str, '%m/%d/%Y')
+   except ValueError:
+       try:
+           date_obj = datetime.strptime(date_str, '%m-%d-%Y')
+       except ValueError:
+           raise ValueError(f"Date format is invalid or unparsable: {date_str}")
+   
+   return date_obj.strftime('%Y-%m-%d')
+```
+ 
+**Graceful Format Handling:**
+- Accepts MM/DD/YYYY or MM-DD-YYYY
+- Falls back to second format if first fails
+- Final error includes the problematic input for debugging
+ 
+#### to_date()
+```python
+def to_date(value):
+   if isinstance(value, date):
+       return value
+   if isinstance(value, str):
+       parts = value.split("/")
+       if len(parts) != 3:
+           raise ValueError("Use MM/DD/YYYY format.")
+       month = int(parts[0])
+       day = int(parts[1])
+       year = int(parts[2])
+       return date(year, month, day)
+   else:
+       raise TypeError("Enter a date or a string in MM/DD/YYYY format.")
+```
+ 
+**Flexible Input:**
+- Accepts date objects (pass through)
+- Accepts formatted strings
+- Clear error about expected format
+ 
+**Potential Enhancement:** Could catch ValueError from invalid month/day/year and provide more specific message
+ 
+### 4. Agricultural Calculations
+ 
+#### calculate_plant_space()
+```python
+def calculate_plant_space(length, width=None, count=1, shape='rectangle'):
+   if count <= 0:
+       raise ValueError("Count of plants must be a positive number.")
+   
+   if shape == 'rectangle':
+       if width is None:
+           raise ValueError("Width must be provided for rectangle.")
+       area = length * width
+   elif shape == 'circle':
+       radius = length / 2
+       area = math.pi * radius ** 2
+   else:
+       raise ValueError("Shape is not recognized.")
+   
+   area_per_plant = area / count
+   spacing = math.sqrt(area_per_plant)
+   return spacing
+```
+ 
+**Validation Order:**
+1. Validate count (prevents division by zero)
+2. Validate shape and required parameters
+3. Perform calculation
+ 
+#### calculate_compost_needed()
+```python
+def calculate_compost_needed(soil_volume, target_ratio=0.25):
+   if soil_volume <= 0:
+       raise ValueError("Soil volume must be a positive number.")
+   if not (0.0 <= target_ratio <= 1.0):
+       raise ValueError("Target ratio must be between 0.0 and 1.0.")
+   
+   compost_needed = soil_volume * target_ratio
+   soil_needed = soil_volume - compost_needed
+   
+   return {
+       'compost_ratio_needed': compost_needed,
+       'soil_ratio_needed': soil_needed
+   }
+```
+ 
+**Mathematical Validation:**
+- Soil volume must be positive (can't have negative volume)
+- Ratio must be 0-1 (percentage as decimal)
+- Messages explain valid ranges
+ 
+#### estimate_harvest_yield()
+```python
+def estimate_harvest_yield(plant_type, plant_count, avg_per_plant=None):
+   if plant_count < 0:
+       raise ValueError("Plant count must be 0 or more.")
+   
+   plant_type = plant_type.lower()
+   
+   defaults = {
+       "tomato": 8.0,
+       "pepper": 3.0,
+       "cucumber": 5.0,
+       # ... more defaults
+   }
+   
+   if avg_per_plant is not None:
+       per_plant = avg_per_plant
+   elif plant_type in defaults:
+       per_plant = defaults[plant_type]
+   else:
+       raise ValueError("Unknown plant type. Please give avg_per_plant value.")
+```
+ 
+**Graceful Defaults:**
+- Accepts custom yield if provided
+- Falls back to defaults for known plants
+- Clear error if unknown plant and no custom yield
+ 
+### 5. Class-Level Error Handling
+ 
+#### AbstractContainer Base Class
+```python
+class AbstractContainer(ABC):
+   def __init__(self, container_id, length, depth):
+       if not isinstance(container_id, str) or not container_id:
+           raise ValueError("Container ID must be a non-empty string.")
+       if length <= 0 or depth <= 0:
+           raise ValueError("Length and Depth must be positive.")
+```
+ 
+**Constructor Validation:**
+- Ensures ID is non-empty string
+- Validates dimensions immediately
+- Prevents invalid objects from being created
+ 
+#### Garden Class
+```python
+class Garden:
+   def add_plant(self, plant_type, count, tolerance="tender", avg_per_plant=None):
+       if not plant_type:
+           raise ValueError("Plant type required.")
+       if count < 0:
+           raise ValueError("Count must be >= 0.")
+       tolerance = tolerance.lower()
+       if tolerance not in ["tender", "half-hardy", "hardy"]:
+           raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
+```
+ 
+**Enumerated Values:**
+- Validates tolerance against allowed values
+- Case-insensitive (converts to lowercase)
+- Clear message lists valid options
+ 
+#### Plant Class
+```python
+class Plant:
+   def __init__(self, species, planting_date, required_ph):
+       if not isinstance(species, str) or not species.strip():
+           raise ValueError("Species name must be a valid string.")
+       if not self.is_valid_date(planting_date):
+           raise ValueError("Planting date must be in YYYY-MM-DD format.")
+       if not self.is_valid_ph(required_ph):
+           raise ValueError("pH must be between 0 and 14.")
+```
+ 
+**Comprehensive Constructor Validation:**
+- Type checking
+- Empty string detection
+- Format validation (dates)
+- Range validation (pH)
+ 
+#### Soil Class
+```python
+class Soil:
+   def adjust_ph(self, new_ph):
+       if not self.is_valid_ph(new_ph):
+           raise ValueError("Invalid pH level.")
+       self._ph_level = new_ph
+       return f"Soil pH adjusted to {new_ph}"
+```
+ 
+**State Mutation Protection:**
+- Validates before modifying internal state
+- Prevents invalid state from being created
+ 
+### 6. Season and Date Calculations
+ 
+#### calculate_season_change()
+```python
+def calculate_season_change(current_date=None):
+   if current_date is None:
+       current_date = datetime.today()
+   elif not isinstance(current_date, datetime):
+       raise TypeError("Date is invalid.")
+```
+ 
+**Optional Parameter Handling:**
+- Accepts None (uses current date)
+- Validates type if provided
+- Clear error if wrong type
+ 
+#### is_safe_to_plant()
+```python
+def is_safe_to_plant(plant_date, last_frost, tolerance="tender", extra_days=0):
+   p = to_date(plant_date)
+   l = to_date(last_frost)
+   
+   tolerance = tolerance.lower()
+   
+   if tolerance == "tender":
+       offset = 0
+   elif tolerance == "half-hardy":
+       offset = -7
+   elif tolerance == "hardy":
+       offset = -14
+   else:
+       raise ValueError("Tolerance must be tender, half-hardy, or hardy.")
+```
+ 
+**Delegation Pattern:**
+- Delegates date parsing to `to_date()` (errors handled there)
+- Validates tolerance locally
+- Single source of truth for each validation type
+ 
+## Error Handling Patterns
+ 
+### Pattern 1: Early Return for Invalid Input
+```python
+if not valid_condition:
+   raise ValueError("Descriptive message")
+# Continue with valid data
+```
+ 
+### Pattern 2: Try-Except for Expected Failures
+```python
+try:
+   date_obj = datetime.strptime(date_str, '%m/%d/%Y')
+except ValueError:
+   # Fallback to alternative format
+```
+ 
+### Pattern 3: Type Checking Before Operations
+```python
+if not isinstance(value, expected_type):
+   raise TypeError("Type message")
+```
+ 
+### Pattern 4: Range Validation
+```python
+if not (min_value <= value <= max_value):
+   raise ValueError(f"Must be between {min_value} and {max_value}")
+```
+ 
+## Testing Error Conditions
+ 
+Our test suite includes tests for:
+- **Boundary values**: Zero, negative, maximum limits
+- **Invalid types**: String instead of number, etc.
+- **Missing required parameters**: None where value required
+- **Invalid formats**: Wrong date formats, unknown shapes
+- **Out-of-range values**: pH > 14, dimensions > 240"
+ 
+Example test:
+```python
+def test_negative_dimensions(self):
+   with self.assertRaises(ValueError) as context:
+       validate_container_dimensions(-5, 10, 12)
+   self.assertIn("Length must be positive", str(context.exception))
+```
+ 
+## Error Messages Best Practices
+ 
+### Clear and Specific
+✅ "Length is larger than maximum limit (240 inches)."  
+❌ "Invalid length."
+ 
+### Include Expected Values
+✅ "Target ratio must be between 0.0 and 1.0."  
+❌ "Bad ratio."
+ 
+### Include Problem Value (when safe)
+✅ f"Date format is invalid or unparsable: {date_str}"  
+❌ "Invalid date."
+ 
+### Actionable
+✅ "Width must be provided for rectangle."  
+❌ "Missing parameter."
+ 
+## Graceful Degradation Strategies
+ 
+### 1. Default Values
+Provide sensible defaults to prevent errors:
+```python
+def calculate_compost_needed(soil_volume, target_ratio=0.25):
+   # Default 25% compost ratio if not specified
+```
+ 
+### 2. Flexible Input Formats
+Accept multiple formats when reasonable:
+```python
+# Accepts both MM/DD/YYYY and MM-DD-YYYY
+date_obj = datetime.strptime(date_str, '%m/%d/%Y')  # Try first
+# Falls back to second format on failure
+```
+ 
+### 3. Case-Insensitive Comparisons
+```python
+tolerance = tolerance.lower()  # Accept "Tender", "TENDER", "tender"
+```
+ 
+### 4. Empty Collections Instead of Null
+```python
+def list_containers(self):
+   return self._containers.copy()  # Returns [] if empty, never None
+```
+ 
+## Known Error Handling Limitations
+ 
+### Limitations We Accept
+1. **No input sanitization for SQL injection** - Not using databases (yet)
+2. **Limited date format support** - Only MM/DD/YYYY and MM-DD-YYYY
+3. **No retry logic** - Simple program doesn't need it
+4. **No logging** - Errors printed to console
+ 
+### Future Enhancements
+1. **Logging framework** - Record errors for debugging
+2. **Custom exception classes** - More specific error types
+3. **Input sanitization** - When adding database support
+4. **Validation schemas** - Use library like Pydantic
+5. **User-friendly CLI errors** - Better formatting in interactive mode
+ 
+## Summary
+ 
+Our error handling strategy prioritizes:
+1. **Early detection** - Validate at entry points
+2. **Clear communication** - Descriptive error messages
+3. **Type safety** - Appropriate exception types
+4. **User focus** - Messages written for end users
+5. **Testability** - All error conditions covered by tests
+ 
+This approach ensures the Garden Management System is reliable and user-friendly for Professor Dempwolf and other users.
+ 
+---
+ 
+**Last Updated:** December 14, 2025
+**Maintained By:** Garden Management Team
